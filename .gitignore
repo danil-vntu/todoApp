@@ -1,0 +1,47 @@
+# Build results
+bin/
+obj/
+out/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# EF Core
+Migrations/*.Designer.cs
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Publish output
+publish/
+*.publishsettings
+
+# Local environment configs
+appsettings.Development.json
+appsettings.Local.json
+
+# Node (на майбутнє для Angular repo, але не завадить)
+node_modules/
+
+# Coverage / test artifacts
+coverage/
+TestResults/
