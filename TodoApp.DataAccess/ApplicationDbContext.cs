@@ -14,5 +14,14 @@ namespace TodoApp.DataAccess
             : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<TaskItem>()
+                .HasOne(t => t.Category)
+                .WithMany(c => c.Tasks)
+                .HasForeignKey(t => t.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }
