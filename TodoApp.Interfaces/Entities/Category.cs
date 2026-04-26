@@ -1,4 +1,4 @@
-﻿namespace TodoApp.DataAccess
+﻿namespace TodoApp.Interfaces
 {
     public class Category
     {
