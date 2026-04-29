@@ -1,0 +1,36 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using TodoApp.Interfaces;
+namespace TodoApp.API
+{
+    public class AuthController : ControllerBase
+    {
+        private readonly IAuthService _authService;
+        
+        public AuthController(IAuthService authService)
+        {
+            _authService = authService;
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequestDto)
+        {
+            try
+            {
+                var token = await _authService.RegisterAsync(registerRequestDto);
+                return Ok(new { Token = token });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+    }
+}
