@@ -1,5 +1,6 @@
 ﻿using TodoApp.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using TodoApp.Interfaces.DTOs;
 namespace TodoApp.Services
 {
     public class AuthService : IAuthService
@@ -16,7 +17,18 @@ namespace TodoApp.Services
             _tokenService = tokenService;
         }
 
-        public async Task<string> RegisterAsync(RegisterRequestDto registerRequestDto)
+        private AuthResponseDto CreateAuthResponse(User user)
+        {
+            var tokenResult = _tokenService.CreateToken(user);
+
+            return new AuthResponseDto
+            {
+                Token = tokenResult.Token,
+                Expiration = tokenResult.Expiration
+            };
+        }
+
+        public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto registerRequestDto)
         {
             if (registerRequestDto == null)
                 throw new ArgumentNullException(nameof(registerRequestDto));
@@ -34,13 +46,24 @@ namespace TodoApp.Services
             };
 
             user.PasswordHash = _passwordHasher.HashPassword(user, registerRequestDto.Password);
+
             await _userRepository.AddAsync(user);
-            return _tokenService.CreateToken(user);
+
+            return CreateAuthResponse(user);
         }
 
-        public async Task<string> LoginAsync(LoginRequestDto loginRequestDto)
+        public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginRequestDto)
         {
-            return "User Logined successfully";
+            if (loginRequestDto == null)
+                throw new ArgumentNullException(nameof(loginRequestDto));
+            var user = await _userRepository.GetByEmailAsync(loginRequestDto.Email);
+            if (user == null)
+                throw new InvalidOperationException("Invalid email or password.");
+            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginRequestDto.Password);
+            if (result == PasswordVerificationResult.Failed)
+                throw new InvalidOperationException("Invalid email or password.");
+
+            return CreateAuthResponse(user);
         }
     }
 }

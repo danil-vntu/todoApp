@@ -1,6 +1,8 @@
-﻿using TodoApp.Interfaces;
-
-public interface ITokenService
+﻿using TodoApp.Interfaces.Models;
+namespace TodoApp.Interfaces
 {
-    string CreateToken(User user);
+    public interface ITokenService
+    {
+        JwtTokenResult CreateToken(User user);
+    }
 }

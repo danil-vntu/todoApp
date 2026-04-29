@@ -1,9 +1,10 @@
 ﻿using TodoApp.Interfaces;
+using TodoApp.Interfaces.DTOs;
 namespace TodoApp.Interfaces
 {
     public interface IAuthService
     {
-        Task<string> RegisterAsync(RegisterRequestDto registerRequestDto);
-        Task<string> LoginAsync(LoginRequestDto loginRequestDto);
+        Task<AuthResponseDto> RegisterAsync(RegisterRequestDto registerRequestDto);
+        Task<AuthResponseDto> LoginAsync(LoginRequestDto loginRequestDto);
     }
 }

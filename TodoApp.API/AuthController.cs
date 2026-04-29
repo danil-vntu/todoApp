@@ -5,7 +5,7 @@ namespace TodoApp.API
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-        
+
         public AuthController(IAuthService authService)
         {
             _authService = authService;
@@ -30,6 +30,24 @@ namespace TodoApp.API
             catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
+        {
+            try
+            {
+                var token = await _authService.LoginAsync(loginRequestDto);
+                return Ok(new { Token = token });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Unauthorized(ex.Message);
             }
         }
     }

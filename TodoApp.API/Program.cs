@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TodoApp.DataAccess;
-using TodoApp.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+
+using TodoApp.DataAccess;
+using TodoApp.Interfaces;   
 using TodoApp.Services;
 
 namespace TodoApp.API
@@ -50,6 +51,7 @@ namespace TodoApp.API
                 };
             });
 
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -61,6 +63,7 @@ namespace TodoApp.API
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
