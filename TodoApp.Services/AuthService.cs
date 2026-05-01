@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using TodoApp.Interfaces.DTOs.Auth;
 using TodoApp.Interfaces.Entities;
+using AutoMapper;
 namespace TodoApp.Services
 {
     public class AuthService : IAuthService
@@ -9,13 +10,16 @@ namespace TodoApp.Services
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
 
         public AuthService(IUserRepository userRepository, 
-            IPasswordHasher<User> passwordHasher, ITokenService tokenService)
+            IPasswordHasher<User> passwordHasher, ITokenService tokenService,
+            IMapper mapper)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _tokenService = tokenService;
+            _mapper = mapper;
         }
 
         private AuthResponseDto CreateAuthResponse(User user)
@@ -40,11 +44,7 @@ namespace TodoApp.Services
                 throw new ArgumentException("Password must be " +
                     "at least 8 characters long.");
 
-            var user = new User 
-            { 
-                Email = registerRequestDto.Email, 
-                Name = registerRequestDto.Name
-            };
+            var user = _mapper.Map<User>(registerRequestDto);
 
             user.PasswordHash = _passwordHasher.HashPassword(user, registerRequestDto.Password);
 

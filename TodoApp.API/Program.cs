@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using AutoMapper;
 
+using TodoApp.Interfaces.Mapping;
 using TodoApp.DataAccess;
 using TodoApp.Interfaces;   
 using TodoApp.Services;
@@ -30,6 +32,7 @@ namespace TodoApp.API
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
             builder.Services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
