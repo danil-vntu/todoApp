@@ -3,20 +3,21 @@ using Microsoft.AspNetCore.Identity;
 using TodoApp.Interfaces.DTOs.Auth;
 using TodoApp.Interfaces.Entities;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 namespace TodoApp.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IApplicationDbContext _context;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
 
-        public AuthService(IUserRepository userRepository, 
+        public AuthService(IApplicationDbContext context, 
             IPasswordHasher<User> passwordHasher, ITokenService tokenService,
             IMapper mapper)
         {
-            _userRepository = userRepository;
+            _context = context;
             _passwordHasher = passwordHasher;
             _tokenService = tokenService;
             _mapper = mapper;
@@ -33,11 +34,29 @@ namespace TodoApp.Services
             };
         }
 
+        private async Task<User?> GetUserByIdAsync(int userId)
+        {
+            return await _context.Users.FindAsync(userId);
+        }
+
+        private async Task<User?> GetUserByEmailAsync(string email) =>
+            await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+        private async Task<bool> ExistsByEmailAsync(string email) =>
+            await _context.Users.AnyAsync(u => u.Email == email);
+
+        private async Task<User> AddAsync(User user)
+        {
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return user;
+        }
+
         public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto registerRequestDto)
         {
             if (registerRequestDto == null)
                 throw new ArgumentNullException(nameof(registerRequestDto));
-            if (await _userRepository.ExistsByEmailAsync(registerRequestDto.Email))
+            if (await ExistsByEmailAsync(registerRequestDto.Email))
                 throw new InvalidOperationException("Email already in use.");
             if (string.IsNullOrWhiteSpace(registerRequestDto.Password) 
                 || registerRequestDto.Password.Length < 8)
@@ -48,7 +67,7 @@ namespace TodoApp.Services
 
             user.PasswordHash = _passwordHasher.HashPassword(user, registerRequestDto.Password);
 
-            await _userRepository.AddAsync(user);
+            await AddAsync(user);
 
             return CreateAuthResponse(user);
         }
@@ -57,7 +76,7 @@ namespace TodoApp.Services
         {
             if (loginRequestDto == null)
                 throw new ArgumentNullException(nameof(loginRequestDto));
-            var user = await _userRepository.GetByEmailAsync(loginRequestDto.Email);
+            var user = await GetUserByEmailAsync(loginRequestDto.Email);
             if (user == null)
                 throw new InvalidOperationException("Invalid email or password.");
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginRequestDto.Password);
@@ -65,6 +84,24 @@ namespace TodoApp.Services
                 throw new InvalidOperationException("Invalid email or password.");
 
             return CreateAuthResponse(user);
+        }
+
+        public async Task<string> ChangePassword(ChangePasswordDto changePasswordDto, int userId)
+        {
+            if (changePasswordDto == null)
+                throw new ArgumentNullException(nameof(changePasswordDto));
+            if (changePasswordDto.NewPassword == null || changePasswordDto.NewPassword.Length < 8)
+                throw new ArgumentException("New password must be at least 8 characters long.");
+
+            var user = await GetUserByIdAsync(userId);
+
+            if (_passwordHasher.VerifyHashedPassword
+                (user, user.PasswordHash, changePasswordDto.OldPassword) == 
+                PasswordVerificationResult.Failed)
+                throw new InvalidOperationException("Invalid email or password.");
+
+            user.PasswordHash = _passwordHasher.HashPassword(user, changePasswordDto.NewPassword);
+            return "Password changed successfully.";
         }
     }
 }
