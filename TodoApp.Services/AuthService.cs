@@ -1,9 +1,9 @@
-﻿using TodoApp.Interfaces;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using TodoApp.Interfaces.DTOs.Auth;
 using TodoApp.Interfaces.Entities;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using TodoApp.Interfaces.Interfaces;
 namespace TodoApp.Services
 {
     public class AuthService : IAuthService

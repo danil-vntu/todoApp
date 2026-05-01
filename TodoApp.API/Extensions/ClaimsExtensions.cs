@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace TodoApp.API
+namespace TodoApp.API.Extensions
 {
     public static class ClaimsExtensions
     {

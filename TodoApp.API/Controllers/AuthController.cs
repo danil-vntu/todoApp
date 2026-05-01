@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TodoApp.Interfaces;
 using TodoApp.Interfaces.DTOs.Auth;
-namespace TodoApp.API
+using TodoApp.Interfaces.Interfaces;
+namespace TodoApp.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

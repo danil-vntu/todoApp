@@ -1,6 +1,6 @@
 ﻿using TodoApp.Interfaces.Entities;
 using TodoApp.Interfaces.Models;
-namespace TodoApp.Interfaces
+namespace TodoApp.Interfaces.Interfaces
 {
     public interface ITokenService
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TodoApp.Interfaces.Entities;
-namespace TodoApp.Interfaces;
+namespace TodoApp.Interfaces.Interfaces;
 
 public interface IApplicationDbContext
 {

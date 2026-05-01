@@ -6,10 +6,10 @@ using System.Text;
 
 using TodoApp.Interfaces.Mapping;
 using TodoApp.DataAccess;
-using TodoApp.Interfaces;   
 using TodoApp.Services;
 using TodoApp.Interfaces.Entities;
 using Microsoft.OpenApi.Models;
+using TodoApp.Interfaces.Interfaces;
 
 namespace TodoApp.API
 {

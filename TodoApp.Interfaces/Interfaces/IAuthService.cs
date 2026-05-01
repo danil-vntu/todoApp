@@ -1,5 +1,5 @@
 ﻿using TodoApp.Interfaces.DTOs.Auth;
-namespace TodoApp.Interfaces
+namespace TodoApp.Interfaces.Interfaces
 {
     public interface IAuthService
     {

@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-
-using TodoApp.Interfaces;
 using TodoApp.Interfaces.DTOs.Categories;
 using TodoApp.Interfaces.Entities;
+using TodoApp.Interfaces.Interfaces;
 
 namespace TodoApp.Services
 {

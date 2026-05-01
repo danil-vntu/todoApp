@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TodoApp.Interfaces;
+using TodoApp.API.Extensions;
 using TodoApp.Interfaces.DTOs.Categories;
-namespace TodoApp.API
+using TodoApp.Interfaces.Interfaces;
+
+namespace TodoApp.API.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CategoryController : ControllerBase

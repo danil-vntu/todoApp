@@ -1,7 +1,7 @@
 ﻿using TodoApp.Interfaces.DTOs.Categories;
 using TodoApp.Interfaces.Entities;
 
-namespace TodoApp.Interfaces
+namespace TodoApp.Interfaces.Interfaces
 {
     public interface ICategoryService
     {
