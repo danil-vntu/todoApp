@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 using TodoApp.Interfaces;
+using TodoApp.Interfaces.Entities;
 using TodoApp.Interfaces.Models;
 
 namespace TodoApp.Services

@@ -1,4 +1,4 @@
-﻿namespace TodoApp.Interfaces
+﻿namespace TodoApp.Interfaces.DTOs.Auth
 {
     public class RegisterRequestDto
     {

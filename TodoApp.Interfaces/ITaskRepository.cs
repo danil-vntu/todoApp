@@ -1,4 +1,6 @@
-﻿namespace TodoApp.Interfaces
+﻿using TodoApp.Interfaces.Entities;
+
+namespace TodoApp.Interfaces
 {
     public interface ITaskRepository
     {

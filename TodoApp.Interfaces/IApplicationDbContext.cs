@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TodoApp.Interfaces.Entities;
 namespace TodoApp.Interfaces;
 
 public interface IApplicationDbContext

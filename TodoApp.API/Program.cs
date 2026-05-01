@@ -7,6 +7,7 @@ using System.Text;
 using TodoApp.DataAccess;
 using TodoApp.Interfaces;   
 using TodoApp.Services;
+using TodoApp.Interfaces.Entities;
 
 namespace TodoApp.API
 {

@@ -1,5 +1,6 @@
 ﻿using TodoApp.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using TodoApp.Interfaces.Entities;
 
 namespace TodoApp.DataAccess
 {

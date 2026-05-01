@@ -1,4 +1,4 @@
-﻿namespace TodoApp.Interfaces
+﻿namespace TodoApp.Interfaces.Entities
 {
     public class User
     {

@@ -1,4 +1,4 @@
-﻿namespace TodoApp.Interfaces.DTOs
+﻿namespace TodoApp.Interfaces.DTOs.Auth
 {
     public class AuthResponseDto
     {

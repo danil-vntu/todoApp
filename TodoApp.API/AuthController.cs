@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TodoApp.Interfaces;
+using TodoApp.Interfaces.DTOs.Auth;
 namespace TodoApp.API
 {
     public class AuthController : ControllerBase

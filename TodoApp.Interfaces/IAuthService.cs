@@ -1,5 +1,4 @@
-﻿using TodoApp.Interfaces;
-using TodoApp.Interfaces.DTOs;
+﻿using TodoApp.Interfaces.DTOs.Auth;
 namespace TodoApp.Interfaces
 {
     public interface IAuthService
