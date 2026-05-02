@@ -1,9 +1,10 @@
 ﻿using TodoApp.Interfaces.Entities;
 using TodoApp.Interfaces.DTOs.Categories;
 using TodoApp.Interfaces.DTOs.Auth;
+using TodoApp.Interfaces.DTOs.Users;
+using TodoApp.Interfaces.DTOs.Tasks;
 
 using AutoMapper;
-using TodoApp.Interfaces.DTOs.Users;
 
 namespace TodoApp.Interfaces.Mapping
 {
@@ -31,6 +32,13 @@ namespace TodoApp.Interfaces.Mapping
                 .ForMember(m => m.CreatedAt, opt => opt.Ignore())
                 .ForMember(m => m.Tasks, opt => opt.Ignore())
                 .ForMember(m => m.Categories, opt => opt.Ignore());
+
+            CreateMap<TaskCreateUpdateDto, TaskItem>()
+                .ForMember(m => m.Id, opt => opt.Ignore())
+                .ForMember(m => m.CreatedAt, opt => opt.Ignore())
+                .ForMember(m => m.UserId, opt => opt.Ignore())
+                .ForMember(m => m.User, opt => opt.Ignore())
+                .ForMember(m => m.Category, opt => opt.Ignore());
         } 
     }
 }
