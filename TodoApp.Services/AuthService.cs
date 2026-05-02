@@ -90,8 +90,6 @@ namespace TodoApp.Services
         {
             if (changePasswordDto == null)
                 throw new ArgumentNullException(nameof(changePasswordDto));
-            if (changePasswordDto.NewPassword == null || changePasswordDto.NewPassword.Length < 8)
-                throw new ArgumentException("New password must be at least 8 characters long.");
 
             var user = await GetUserByIdAsync(userId);
 
@@ -101,6 +99,7 @@ namespace TodoApp.Services
                 throw new InvalidOperationException("Invalid email or password.");
 
             user.PasswordHash = _passwordHasher.HashPassword(user, changePasswordDto.NewPassword);
+            await _context.SaveChangesAsync();
             return "Password changed successfully.";
         }
     }

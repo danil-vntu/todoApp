@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 using TodoApp.Interfaces.DTOs.Auth;
 using TodoApp.Interfaces.Interfaces;
+using TodoApp.API.Extensions;
 namespace TodoApp.API.Controllers
 {
     [ApiController]
@@ -52,6 +55,16 @@ namespace TodoApp.API.Controllers
             {
                 return Unauthorized(ex.Message);
             }
+        }
+
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
+        {
+            var userId = User.GetUserId();
+            var result = await _authService.ChangePassword(changePasswordDto, userId);
+
+            return Ok(result);
         }
     }
 }
