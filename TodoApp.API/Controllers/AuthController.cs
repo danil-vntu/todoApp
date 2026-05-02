@@ -20,41 +20,15 @@ namespace TodoApp.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequestDto)
         {
-            try
-            {
-                var token = await _authService.RegisterAsync(registerRequestDto);
-                return Ok(new { Token = token });
-            }
-            catch (ArgumentNullException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(ex.Message);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var token = await _authService.RegisterAsync(registerRequestDto);
+            return Ok(new { Token = token });
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
         {
-            try
-            {
-                var token = await _authService.LoginAsync(loginRequestDto);
-                return Ok(new { Token = token });
-            }
-            catch (ArgumentNullException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Unauthorized(ex.Message);
-            }
+            var token = await _authService.LoginAsync(loginRequestDto);
+            return Ok(new { Token = token });
         }
 
         [Authorize]
