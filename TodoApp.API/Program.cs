@@ -29,10 +29,10 @@ namespace TodoApp.API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfile<MappingProfile>();
@@ -70,7 +70,7 @@ namespace TodoApp.API
                             var response = new
                             {
                                 StatusCode = 401,
-                                Message = "Ви не авторизовані або токен недійсний."
+                                Message = "You are not authorized!"
                             };
 
                             return context.Response.WriteAsJsonAsync(response);
@@ -107,9 +107,6 @@ namespace TodoApp.API
                     }
                 });
             });
-
-
-
 
             var app = builder.Build();
 
