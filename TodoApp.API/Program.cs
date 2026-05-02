@@ -10,6 +10,8 @@ using TodoApp.Services;
 using TodoApp.Interfaces.Entities;
 using Microsoft.OpenApi.Models;
 using TodoApp.Interfaces.Interfaces;
+using TodoApp.API.Middlewares;
+using Azure;
 
 namespace TodoApp.API
 {
@@ -22,8 +24,60 @@ namespace TodoApp.API
             // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddAutoMapper(cfg =>
+            {
+                cfg.AddProfile<MappingProfile>();
+            });
+            builder.Services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    var key = builder.Configuration["Jwt:Key"];
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(key)
+                        )
+                    };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnChallenge = context =>
+                        {
+                            context.HandleResponse();
+
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            context.Response.ContentType = "application/json";
+
+                            var response = new
+                            {
+                                StatusCode = 401,
+                                Message = "Ви не авторизовані або токен недійсний."
+                            };
+
+                            return context.Response.WriteAsJsonAsync(response);
+                        }
+                    };
+                });
+
             builder.Services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "TodoApp API", Version = "v1" });
@@ -54,44 +108,14 @@ namespace TodoApp.API
                 });
             });
 
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-            builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<ITokenService, TokenService>();
-            builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddScoped<ICategoryService, CategoryService>();
-            builder.Services.AddAutoMapper(cfg =>
-            {
-                cfg.AddProfile<MappingProfile>();
-            });
-            builder.Services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-            {
-                var key = builder.Configuration["Jwt:Key"];
 
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(key)
-                    )
-                };
-            });
 
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
+            app.UseMiddleware<ExceptionMiddleware>();
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
