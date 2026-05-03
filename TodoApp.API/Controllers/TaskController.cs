@@ -19,10 +19,10 @@ namespace TodoApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsersTasks()
+        public async Task<IActionResult> GetUsersTasks([FromQuery] TaskListQueryDto queryDto)
         {
             var userId = User.GetUserId();
-            var tasks = await _taskService.GetUsersTasksAsync(userId);
+            var tasks = await _taskService.GetUsersTasksAsync(queryDto, userId);
 
             return Ok(tasks);
         }

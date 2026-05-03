@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using TodoApp.Interfaces.DTOs.Paging;
 using TodoApp.Interfaces.DTOs.Tasks;
 using TodoApp.Interfaces.Entities;
 using TodoApp.Interfaces.Interfaces;
@@ -17,17 +18,39 @@ namespace TodoApp.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<TaskItem>> GetUsersTasksAsync(int userId)
+        public async Task<PagedResultDto<TaskResponseDto>> GetUsersTasksAsync(TaskListQueryDto queryDto, int userId)
         {
-            var tasks = await _context.TaskItems
-                .Where(t => t.UserId == userId)
+            IQueryable<TaskItem> query = _context.TaskItems.Where(t => t.UserId == userId);
+
+            if (queryDto.CategoryId.HasValue)
+                query = query.Where(t => t.CategoryId == queryDto.CategoryId.Value);
+
+            if (!string.IsNullOrWhiteSpace(queryDto.Search))
+            {
+                var searchTerm = queryDto.Search.Trim().ToLower();
+                query = query.Where(t => t.Title.Contains(searchTerm) || t.Description.Contains(searchTerm));
+            }
+
+            var itemsCount = await query.CountAsync();
+
+            var pagedTasks = await query
+                .OrderByDescending(t => t.CreatedAt)
+                .Skip((queryDto.Page - 1) * queryDto.PageSize)
+                .Take(queryDto.PageSize)
                 .ToListAsync();
 
-            if (tasks == null) return Enumerable.Empty<TaskItem>();
-            return tasks;
+            var taskDtos = _mapper.Map<List<TaskResponseDto>>(pagedTasks);
+
+            return new PagedResultDto<TaskResponseDto>
+            {
+                Items = taskDtos,
+                TotalCount = itemsCount,
+                Page = queryDto.Page,
+                PageSize = queryDto.PageSize
+            };
         }
 
-        public async Task<TaskItem?> GetTaskByIdAsync(int taskId, int userId)
+        public async Task<TaskResponseDto?> GetTaskByIdAsync(int taskId, int userId)
         {
             var task = await _context.TaskItems.FindAsync(taskId);
 
@@ -37,10 +60,10 @@ namespace TodoApp.Services
             if (task.UserId != userId)
                 throw new UnauthorizedAccessException("You do not have access to this task");
 
-            return task;
+            return _mapper.Map<TaskResponseDto>(task);
         }
 
-        public async Task<TaskItem> CreateTaskAsync(TaskCreateUpdateDto taskDto, int userId)
+        public async Task<TaskResponseDto> CreateTaskAsync(TaskCreateUpdateDto taskDto, int userId)
         {
             var category = await _context.Categories.FindAsync(taskDto.CategoryId);
 
@@ -55,10 +78,10 @@ namespace TodoApp.Services
             await _context.TaskItems.AddAsync(task);
             await _context.SaveChangesAsync();
 
-            return task;
+            return _mapper.Map<TaskResponseDto>(task);
         }
 
-        public async Task<TaskItem> UpdateTaskAsync(TaskCreateUpdateDto taskDto, int taskId, int userId)
+        public async Task<TaskResponseDto> UpdateTaskAsync(TaskCreateUpdateDto taskDto, int taskId, int userId)
         {
             var currentTask = await _context.TaskItems.FirstOrDefaultAsync(t => t.Id == taskId);
 
@@ -78,7 +101,7 @@ namespace TodoApp.Services
 
             var task = _mapper.Map(taskDto, currentTask);
             await _context.SaveChangesAsync();
-            return task;
+            return _mapper.Map<TaskResponseDto>(task);
         }
 
         public async Task<bool> DeleteTaskAsync(int taskId, int userId)

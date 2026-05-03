@@ -39,6 +39,8 @@ namespace TodoApp.Interfaces.Mapping
                 .ForMember(m => m.UserId, opt => opt.Ignore())
                 .ForMember(m => m.User, opt => opt.Ignore())
                 .ForMember(m => m.Category, opt => opt.Ignore());
+
+            CreateMap<TaskItem, TaskResponseDto>();
         } 
     }
 }
