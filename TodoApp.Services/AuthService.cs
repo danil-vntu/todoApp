@@ -78,7 +78,7 @@ namespace TodoApp.Services
                 throw new ArgumentNullException(nameof(loginRequestDto));
             var user = await GetUserByEmailAsync(loginRequestDto.Email);
             if (user == null)
-                throw new InvalidOperationException("Invalid email or password.");
+                throw new KeyNotFoundException("User is not found.");
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginRequestDto.Password);
             if (result == PasswordVerificationResult.Failed)
                 throw new InvalidOperationException("Invalid email or password.");
@@ -92,6 +92,8 @@ namespace TodoApp.Services
                 throw new ArgumentNullException(nameof(changePasswordDto));
 
             var user = await GetUserByIdAsync(userId);
+            if (user == null)
+                throw new KeyNotFoundException("User is not found.");
 
             if (_passwordHasher.VerifyHashedPassword
                 (user, user.PasswordHash, changePasswordDto.OldPassword) == 

@@ -21,7 +21,7 @@ namespace TodoApp.Services
             var user = await _context.Users.FindAsync(userId);
 
             if (user == null)
-                throw new InvalidOperationException("User is not found");
+                throw new KeyNotFoundException("User is not found");
 
             var userDto = _mapper.Map<UserProfileDto>(user);
             return userDto;
@@ -31,7 +31,7 @@ namespace TodoApp.Services
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null)
-                throw new InvalidOperationException("User is not found");
+                throw new KeyNotFoundException("User is not found");
 
             _mapper.Map(userUpdateDto, user);
             await _context.SaveChangesAsync();
@@ -44,7 +44,7 @@ namespace TodoApp.Services
         {
             var user = await _context.Users.FindAsync(userId);
             if (user == null)
-                throw new InvalidOperationException("User is not found");
+                throw new KeyNotFoundException("User is not found");
 
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();

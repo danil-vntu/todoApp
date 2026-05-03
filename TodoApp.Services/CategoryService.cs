@@ -21,7 +21,7 @@ namespace TodoApp.Services
         {
             var category = await _context.Categories.FindAsync(categoryId);
             if (category == null) 
-                throw new InvalidOperationException("Category is not found");
+                throw new KeyNotFoundException("Category is not found");
             if (category.UserId != userId) 
                 throw new UnauthorizedAccessException("You do not have access to this category");
             return category;
@@ -49,7 +49,7 @@ namespace TodoApp.Services
             var currentCategory = await _context.Categories
                 .FirstOrDefaultAsync(c => c.Id == categoryId);
             if (currentCategory == null) 
-                throw new InvalidOperationException("Category is not found");
+                throw new KeyNotFoundException("Category is not found");
             if (currentCategory.UserId != userId)
                 throw new UnauthorizedAccessException("You do not have access to this category");
             var category = _mapper.Map(categoryDto, currentCategory);
@@ -60,7 +60,7 @@ namespace TodoApp.Services
         {
             var category = await _context.Categories.FindAsync(categoryId);
             if (category == null) 
-                throw new InvalidOperationException("Category is not found");
+                throw new KeyNotFoundException("Category is not found");
             if (category.UserId != userId)
                 throw new UnauthorizedAccessException("You do not have access to this category");
             _context.Categories.Remove(category);
