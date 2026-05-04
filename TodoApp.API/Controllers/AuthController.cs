@@ -21,14 +21,14 @@ namespace TodoApp.API.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequestDto)
         {
             var token = await _authService.RegisterAsync(registerRequestDto);
-            return Ok(new { Token = token });
+            return Ok(token);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
         {
             var token = await _authService.LoginAsync(loginRequestDto);
-            return Ok(new { Token = token });
+            return Ok(token);
         }
 
         [Authorize]
@@ -39,6 +39,16 @@ namespace TodoApp.API.Controllers
             var result = await _authService.ChangePassword(changePasswordDto, userId);
 
             return Ok(result);
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            // In a JWT-based authentication system, logout is typically handled on the client side
+            // by deleting the token. However, you can implement token blacklisting or other mechanisms
+            // to invalidate tokens if needed.
+            return Ok("Logged out successfully");
         }
     }
 }

@@ -5,10 +5,10 @@ namespace TodoApp.Interfaces.Interfaces
 {
     public interface ICategoryService
     {
-        Task<Category?> GetCategoryByIdAsync(int categoryId, int userId);
-        Task<IEnumerable<Category>> GetUsersCategoriesAsync(int userId);
-        Task<Category> CreateCategoryAsync(CategoryCreateUpdateDto categoryDto, int userId);
-        Task<Category> UpdateCategoryAsync
+        Task<CategoryResponseDto?> GetCategoryByIdAsync(int categoryId, int userId);
+        Task<IEnumerable<CategoryResponseDto>> GetUsersCategoriesAsync(int userId);
+        Task<CategoryResponseDto> CreateCategoryAsync(CategoryCreateUpdateDto categoryDto, int userId);
+        Task<CategoryResponseDto> UpdateCategoryAsync
             (CategoryCreateUpdateDto categoryDto, int categoryId, int userId);
         Task<bool> DeleteCategoryAsync(int categoryId, int userId);
     }

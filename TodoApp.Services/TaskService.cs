@@ -22,13 +22,16 @@ namespace TodoApp.Services
         {
             IQueryable<TaskItem> query = _context.TaskItems.Where(t => t.UserId == userId);
 
+            if (query == null) 
+                throw new KeyNotFoundException("Tasks are not found");
+
             if (queryDto.CategoryId.HasValue)
                 query = query.Where(t => t.CategoryId == queryDto.CategoryId.Value);
 
             if (!string.IsNullOrWhiteSpace(queryDto.Search))
             {
                 var searchTerm = queryDto.Search.Trim().ToLower();
-                query = query.Where(t => t.Title.Contains(searchTerm) || t.Description.Contains(searchTerm));
+                query = query.Where(t => t.Title.Contains(searchTerm) || t.Description != null && t.Description.Contains(searchTerm));
             }
 
             var itemsCount = await query.CountAsync();
@@ -65,13 +68,16 @@ namespace TodoApp.Services
 
         public async Task<TaskResponseDto> CreateTaskAsync(TaskCreateUpdateDto taskDto, int userId)
         {
-            var category = await _context.Categories.FindAsync(taskDto.CategoryId);
+            var categoryId = taskDto.CategoryId;
+            if (categoryId.HasValue)
+            {
+                var category = await _context.Categories.FindAsync(categoryId.Value);
 
-            if (category == null)
-                throw new KeyNotFoundException("Category is not found");
-
-            if (category.UserId != userId)
-                throw new UnauthorizedAccessException("You do not have access to this category");
+                if (category == null)
+                    throw new KeyNotFoundException("Category is not found");
+                if (category.UserId != userId)
+                    throw new UnauthorizedAccessException("You do not have access to this category");
+            }
 
             var task = _mapper.Map<TaskItem>(taskDto);
             task.UserId = userId;
@@ -91,16 +97,20 @@ namespace TodoApp.Services
             if (currentTask.UserId != userId)
                 throw new UnauthorizedAccessException("You do not have access to this task");
 
-            var category = await _context.Categories.FindAsync(taskDto.CategoryId);
+            if (taskDto.CategoryId.HasValue)
+            {
+                var category = await _context.Categories.FindAsync(taskDto.CategoryId.Value);
 
-            if (category == null)
-                throw new KeyNotFoundException("Category is not found");
+                if (category == null)
+                    throw new KeyNotFoundException("Category is not found");
 
-            if (category.UserId != userId)
-                throw new UnauthorizedAccessException("You do not have access to this category");
+                if (category.UserId != userId)
+                    throw new UnauthorizedAccessException("You do not have access to this category");
+            }
 
             var task = _mapper.Map(taskDto, currentTask);
             await _context.SaveChangesAsync();
+
             return _mapper.Map<TaskResponseDto>(task);
         }
 

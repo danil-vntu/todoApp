@@ -17,33 +17,37 @@ namespace TodoApp.Services
             _mapper = mapper;
         }
 
-        public async Task<Category?> GetCategoryByIdAsync(int categoryId, int userId)
+        public async Task<CategoryResponseDto?> GetCategoryByIdAsync(int categoryId, int userId)
         {
             var category = await _context.Categories.FindAsync(categoryId);
             if (category == null) 
                 throw new KeyNotFoundException("Category is not found");
             if (category.UserId != userId) 
                 throw new UnauthorizedAccessException("You do not have access to this category");
-            return category;
+
+            return _mapper.Map<CategoryResponseDto>(category); ;
         }
-        public async Task<IEnumerable<Category>> GetUsersCategoriesAsync(int userId)
+        public async Task<IEnumerable<CategoryResponseDto>> GetUsersCategoriesAsync(int userId)
         {
             var categories = await _context.Categories
                 .Where(c => c.UserId == userId)
                 .ToListAsync();
-            if (categories == null) return Enumerable.Empty<Category>();
-            return categories;
+            if (categories == null) return Enumerable.Empty<CategoryResponseDto>();
+
+            return _mapper.Map<List<CategoryResponseDto>>(categories);
         }
-        public async Task<Category> CreateCategoryAsync
+
+        public async Task<CategoryResponseDto> CreateCategoryAsync
             (CategoryCreateUpdateDto categoryDto, int userId)
         {
             var category = _mapper.Map<Category>(categoryDto);
             category.UserId = userId;
             await _context.Categories.AddAsync(category);
             await _context.SaveChangesAsync();
-            return category;
+            return _mapper.Map<CategoryResponseDto>(category);
         }
-        public async Task<Category> UpdateCategoryAsync
+
+        public async Task<CategoryResponseDto> UpdateCategoryAsync
             (CategoryCreateUpdateDto categoryDto, int categoryId, int userId)
         {
             var currentCategory = await _context.Categories
@@ -54,8 +58,9 @@ namespace TodoApp.Services
                 throw new UnauthorizedAccessException("You do not have access to this category");
             var category = _mapper.Map(categoryDto, currentCategory);
             await _context.SaveChangesAsync();
-            return category;
+            return _mapper.Map<CategoryResponseDto>(category);
         }
+
         public async Task<bool> DeleteCategoryAsync(int categoryId, int userId)
         {
             var category = await _context.Categories.FindAsync(categoryId);
@@ -63,6 +68,11 @@ namespace TodoApp.Services
                 throw new KeyNotFoundException("Category is not found");
             if (category.UserId != userId)
                 throw new UnauthorizedAccessException("You do not have access to this category");
+
+            foreach (var task in _context.TaskItems.Where(t => t.CategoryId == categoryId))
+            {
+                task.CategoryId = null;
+            }
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
             return true;
