@@ -79,6 +79,16 @@ namespace TodoApp.API
                     };
                 });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AngularClient", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
             builder.Services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "TodoApp API", Version = "v1" });
@@ -121,6 +131,8 @@ namespace TodoApp.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AngularClient");
 
             app.UseAuthentication();
             app.UseAuthorization();
