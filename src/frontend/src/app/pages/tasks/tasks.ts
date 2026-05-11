@@ -36,4 +36,8 @@ export class Tasks {
     this.taskTitle=""
     this.taskDescription=""
   }
+
+  deleteTask(task:Todo) {
+    this.tasks = this.tasks.filter(item => item !== task);
+  }
 }
