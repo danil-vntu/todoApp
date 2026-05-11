@@ -1,1 +1,29 @@
-<p>login works!</p>
+<div class="border p-4">
+    <h1 class="text-2xl font-bold">
+        Nice to see you!
+    </h1>
+
+    <p class="text-sm mt-4">
+        Here you can login to your account to work with TodoApp!
+    </p>
+</div>
+
+<div class="flex flex-col gap-3 mt-4 items-center">
+    <input
+    type="text"
+    placeholder="Email..." 
+    class="border p-3 rounded w-60" 
+    [(ngModel)]="email"
+    />
+
+    <input
+    type="password"
+    placeholder="Password..." 
+    class="border p-3 rounded w-60" 
+    [(ngModel)]="password"
+    />
+
+    <button class="border p-3 rounded w-60 bg-green-600" (click)="logIn()">
+        Log in
+    </button>
+</div>
