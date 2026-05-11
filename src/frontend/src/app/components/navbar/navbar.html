@@ -1,1 +1,27 @@
-<p>navbar works!</p>
+<nav class="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
+  <a routerLink="/tasks" class="text-xl font-bold text-gray-900">
+    TodoApp
+  </a>
+
+  <div class="flex items-center gap-4">
+    <a routerLink="/tasks" routerLinkActive="text-blue-600" class="font-medium text-gray-600 hover:text-blue-600">
+      Tasks
+    </a>
+
+    <a routerLink="/categories" routerLinkActive="text-blue-600" class="font-medium text-gray-600 hover:text-blue-600">
+      Categories
+    </a>
+
+    <a routerLink="/profile" routerLinkActive="text-blue-600" class="font-medium text-gray-600 hover:text-blue-600">
+      Profile
+    </a>
+
+    <a routerLink="/login" routerLinkActive="text-blue-600" class="font-medium text-gray-600 hover:text-blue-600">
+      Login
+    </a>
+
+    <a routerLink="/register" routerLinkActive="text-blue-600" class="font-medium text-gray-600 hover:text-blue-600">
+      Register
+    </a>
+  </div>
+</nav>
