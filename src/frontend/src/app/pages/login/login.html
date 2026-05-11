@@ -23,7 +23,13 @@
     [(ngModel)]="password"
     />
 
-    <button class="border p-3 rounded w-60 bg-green-600" (click)="logIn()">
+    @if (errorMessage()) {
+        <p class="text-red-500">
+            {{ errorMessage() }}
+        </p>
+    }
+
+    <button class="border p-3 rounded w-60 bg-green-600" (click)="login()">
         Log in
     </button>
 </div>
