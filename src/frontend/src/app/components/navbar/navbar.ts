@@ -12,4 +12,9 @@ export class Navbar {
   isAuthenticated() {
     return localStorage.getItem("token") !== null;
   }
+
+  logout() {
+    localStorage.removeItem("token");
+    window.location.reload();
+  }
 }
