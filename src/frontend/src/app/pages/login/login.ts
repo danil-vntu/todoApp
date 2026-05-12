@@ -1,6 +1,5 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth';
 
 
@@ -31,6 +30,11 @@ export class Login {
         console.log("SUCCESS");
         console.log(response);
         localStorage.setItem("token", response.token);
+        window.location.reload();
+        
+        this.email="";
+        this.password="";
+        this.errorMessage.set("");
       },
       error: (error) => {
         console.log("ERROR");

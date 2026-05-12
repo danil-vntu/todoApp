@@ -23,13 +23,23 @@
     [(ngModel)]="password"
     />
 
+    @if(password.length >0 && password.length<8) {
+        <p class="text-red-500">
+            Password must be at least 8 charachters.
+        </p>
+    }
+
     @if (errorMessage()) {
         <p class="text-red-500">
             {{ errorMessage() }}
         </p>
     }
 
-    <button class="border p-3 rounded w-60 bg-green-600" (click)="login()">
+    <button 
+    class="border p-3 rounded w-60 bg-green-600" 
+    (click)="login()"
+    [disabled]="password.length<8 || !email"
+    >
         Log in
     </button>
 </div>
