@@ -29,6 +29,12 @@
         </p>
     }
 
+    @if(!email ) {
+        <p class="text-red-500">
+            Email is required.
+        </p>
+    }
+
     @if (errorMessage()) {
         <p class="text-red-500">
             {{ errorMessage() }}
@@ -42,4 +48,12 @@
     >
         Log in
     </button>
+
+    <p class="text-sm text-gray-600">
+    Don't have an account?
+
+    <a routerLink="/register" class="text-blue-600">
+        Register
+    </a>
+    </p>
 </div>
