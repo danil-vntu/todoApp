@@ -1,1 +1,74 @@
-<p>categories works!</p>
+<div class="p-4 flex flex-col gap-4">
+    <div class="flex gap-3">
+        <input
+        type="text"
+        placeholder="Category name..."
+        class="border p-2 rounded w-full"
+        [(ngModel)]="categoryName"
+        />
+
+        <button 
+        class="border rounded px-4 bg-green-500"
+        (click)="createCategory()"
+        >
+        Add
+        </button>
+    </div>
+
+    <div class="flex flex-col gap-3">
+
+        @for (category of categories(); track category.id) {
+
+            <div class="border rounded p-3 flex items-center justify-between">
+
+                @if (editingCategoryId !== category.id) {
+
+                    <p>
+                    {{ category.name }}
+                    </p>
+
+                    <div class="flex gap-3">
+                        <button
+                        class="border rounded px-3 py-1 bg-gray-300"
+                        (click)="startEdit(category)"
+                        >
+                        Edit
+                        </button>
+
+                        <button
+                        class="border rounded px-3 py-1 bg-red-500"
+                        (click)="deleteCategory(category.id)"
+                        >
+                        Delete
+                        </button>
+                    </div>
+                }
+
+                @else {
+
+                    <div class="flex gap-3 w-full">
+                        <input
+                        type="text"
+                        class="border rounded p-2 w-full"
+                        [(ngModel)]="editingCategoryName"
+                        />
+
+                        <button
+                        class="border rounded px-3 py-1"
+                        (click)="saveEdit(category.id)"
+                        >
+                        Save
+                        </button>
+
+                        <button
+                        class="border rounded px-3 py-1"
+                        (click)="cancelEdit()"
+                        >
+                        Cancel
+                        </button>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
