@@ -1,18 +1,20 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-register',
   imports: [FormsModule, RouterLink],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
 export class Register {
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService,
+    private router: Router
+  ) {}
 
   email=""
   name=""
@@ -33,7 +35,7 @@ export class Register {
         console.log("SUCCESS");
         console.log(response);
         localStorage.setItem("token", response.token);
-        window.location.reload();
+        this.router.navigate(["/tasks"])
         
         this.email="";
         this.name="";

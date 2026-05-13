@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 
 @Component({
@@ -12,7 +12,9 @@ import { RouterLink } from '@angular/router';
 })
 export class Login {
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService,
+    private router: Router
+  ) {}
 
   email=""
   password=""
@@ -31,7 +33,7 @@ export class Login {
         console.log("SUCCESS");
         console.log(response);
         localStorage.setItem("token", response.token);
-        window.location.reload();
+        this.router.navigate(["/tasks"])
         
         this.email="";
         this.password="";
