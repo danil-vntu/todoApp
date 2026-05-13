@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { UserProfile } from '../interfaces/user/user-profile';
 import { UserUpdate } from '../interfaces/user/user-update-request';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -15,12 +16,12 @@ export class UserService {
   getUser() {
 
     return this.http.get<UserProfile>(
-      "https://localhost:7178/api/user/me"
+      `${environment.apiUrl}/user/me`
   )}
   
   updateUser(body: UserUpdate) {
     return this.http.put<UserProfile>(
-      "https://localhost:7178/api/user/me",
+      `${environment.apiUrl}/user/me`,
       body
     )
   }

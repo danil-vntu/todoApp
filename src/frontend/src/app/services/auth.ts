@@ -5,6 +5,7 @@ import { AuthResponse } from '../interfaces/auth/auth-response';
 import { LoginRequest } from '../interfaces/auth/login-request';
 import { RegisterRequest } from '../interfaces/auth/register-request';
 import { ChangePassword } from '../interfaces/auth/change-password-request';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -15,21 +16,21 @@ export class AuthService {
 
   register(body: RegisterRequest) {
     return this.http.post<AuthResponse>(
-    'https://localhost:7178/api/auth/register',
+    `${environment.apiUrl}/auth/register`,
     body
     )
   }
 
   login(body: LoginRequest) {
     return this.http.post<AuthResponse>(
-    'https://localhost:7178/api/auth/login',
+    `${environment.apiUrl}/auth/login`,
     body
     )
   }
 
   changePassword(body: ChangePassword) {
     return this.http.post(
-      'https://localhost:7178/api/auth/change-password',
+      `${environment.apiUrl}/auth/change-password`,
       body,
       { responseType: "text"}
     )
