@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthResponse } from '../interfaces/auth/auth-response';
 import { LoginRequest } from '../interfaces/auth/login-request';
 import { RegisterRequest } from '../interfaces/auth/register-request';
+import { ChangePassword } from '../interfaces/auth/change-password-request';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,14 @@ export class AuthService {
     return this.http.post<AuthResponse>(
     'https://localhost:7178/api/auth/login',
     body
+    )
+  }
+
+  changePassword(body: ChangePassword) {
+    return this.http.post(
+      'https://localhost:7178/api/auth/change-password',
+      body,
+      { responseType: "text"}
     )
   }
 }

@@ -12,7 +12,7 @@ import { RouterLink } from '@angular/router';
 })
 export class Login {
 
-  constructor(private authService: AuthService ) {}
+  constructor(private authService: AuthService) {}
 
   email=""
   password=""
