@@ -1,4 +1,80 @@
-<div class="flex flex-col gap-3">
+<div class="border rounded p-3 gap-3 flex items-center justify-between">
+
+    <div class="flex flex-col gap-3 w-full">
+
+        <label>
+            Title:
+        </label>
+
+        <input
+        type="text"
+        class="border rounded p-2 w-full"
+        [(ngModel)]="title"
+        />
+
+        <label>
+            Description:
+        </label>
+
+        <textarea
+        class="border rounded p-2 w-full"
+        [(ngModel)]="description"
+        ></textarea>
+
+        <label>
+            Due date:
+        </label>
+
+        <input 
+        type="date" 
+        [(ngModel)]="dueDate"
+        />
+
+        <label>
+            Category:
+        </label>
+
+        <select
+        class="border rounded p-2"
+        [(ngModel)]="categoryId"
+        >
+
+            <option [ngValue]="null">
+                No category
+            </option>
+
+            @for (category of categories(); track category.id) {
+
+                <option [ngValue]="category.id">
+                    {{ category.name }}
+                </option>
+
+            }
+        </select>
+
+        <div class="flex gap-3">
+
+            <button
+            class="border rounded px-3 py-1"
+            (click)="createTask()"
+            >
+                Save
+            </button>
+
+            <button
+            class="border rounded px-3 py-1"
+            (click)="cancelEdit()"
+            >
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+
+<div class="flex flex-col gap-3 mt-4">
 
     @for (task of tasks()?.items; track task.id) {
 
