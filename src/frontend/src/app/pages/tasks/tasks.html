@@ -1,1 +1,69 @@
-<p>tasks</p>
+    <div class="flex flex-col gap-3">
+
+        @for (task of tasks()?.items; track task.id) {
+
+            <div class="border rounded p-3 gap-3 flex items-center justify-between">
+
+                @if (id !== task.id) {
+                    
+                    <input 
+                        type="checkbox"
+                        [checked]="task.isCompleted"
+                        (change)="toggleCompleted(task)"
+                    />
+                    <div class="border rounded gap-3 p-3 w-full" 
+                        [class.line-through]="task.isCompleted"
+                        [class.text-gray-500]="task.isCompleted">
+                        <p class="texl-xl font-bold">
+                            {{ task.title }}
+                        </p>
+
+                        <p class="mt-2">
+                            {{ task.description }}
+                        </p>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button
+                        class="border rounded px-3 py-1 bg-gray-300"
+                        (click)="startUpdate(task)"
+                        >
+                        Edit
+                        </button>
+
+                        <button
+                        class="border rounded px-3 py-1 bg-red-500"
+                        (click)="deleteTask(task.id)"
+                        >
+                        Delete
+                        </button>
+                    </div>
+                }
+
+                @else {
+
+                    <div class="flex gap-3 w-full">
+                        <input
+                        type="text"
+                        class="border rounded p-2 w-full"
+                        [(ngModel)]="title"
+                        />
+
+                        <button
+                        class="border rounded px-3 py-1"
+                        (click)="updateTask(task.id)"
+                        >
+                        Save
+                        </button>
+
+                        <button
+                        class="border rounded px-3 py-1"
+                        (click)="cancelEdit()"
+                        >
+                        Cancel
+                        </button>
+                    </div>
+                }
+            </div>
+        }
+    </div>
