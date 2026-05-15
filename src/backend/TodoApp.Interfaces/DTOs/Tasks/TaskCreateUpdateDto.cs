@@ -13,7 +13,7 @@ namespace TodoApp.Interfaces.DTOs.Tasks
 
         public bool IsCompleted { get; set; }
 
-        public DateTime? DueDate { get; set; }
+        public DateOnly? DueDate { get; set; }
 
         public int? CategoryId { get; set; } = null!;
     }

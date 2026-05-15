@@ -8,10 +8,11 @@ import { CategoryResponse } from '../../interfaces/category/category-response';
 import { TaskResponse } from '../../interfaces/task/task-response';
 import { PagedResult } from '../../interfaces/paging/paged-result';
 import { TaskCreateUpdate } from '../../interfaces/task/task-create-update';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-tasks',
-  imports: [FormsModule],
+  imports: [FormsModule, DatePipe],
   templateUrl: './tasks.html',
   styleUrl: './tasks.css',
 })
@@ -26,7 +27,7 @@ export class Tasks implements OnInit {
   search = "";
   searchCategoryId = undefined;
 
-  id: number | null = null;
+  id = signal<number | null>(null);
   title = '';
   description = '';
   isCompleted = false;
@@ -46,7 +47,7 @@ export class Tasks implements OnInit {
   errorMessage ="";
 
   private clearForm() {
-    this.id = null;
+    this.id.set(null);
     this.title = '';
     this.description = '';
     this.isCompleted = false;
@@ -97,6 +98,17 @@ export class Tasks implements OnInit {
     this.loadTasks()
   }
 
+  nextPage() {
+  this.page++;
+  this.loadTasks();
+  }
+
+  previousPage() {
+  if (this.page === 1) return;
+  this.page--;
+  this.loadTasks();
+  }
+
   loadCategories() {
     this.categoryService.getCategories()
     .subscribe({
@@ -107,7 +119,16 @@ export class Tasks implements OnInit {
         this.showError(error);
       }
     });
-  }  
+  } 
+  
+  getCategoryName(categoryId: number | null) {
+    if (categoryId === null) return 'No category';
+
+    const category = this.categories()
+    .find(c => c.id === categoryId);
+
+    return category?.name || 'Unknown category';
+  }
 
   loadTasks() {
     const query = {
@@ -144,7 +165,7 @@ export class Tasks implements OnInit {
   }
 
   startUpdate(task: TaskResponse) {
-    this.id = task.id;
+    this.id.set(task.id);
     this.title = task.title;
     this.description = task.description || "";
     this.isCompleted = task.isCompleted;

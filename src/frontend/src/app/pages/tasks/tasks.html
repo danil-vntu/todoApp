@@ -1,69 +1,161 @@
-    <div class="flex flex-col gap-3">
+<div class="flex flex-col gap-3">
 
-        @for (task of tasks()?.items; track task.id) {
+    @for (task of tasks()?.items; track task.id) {
+
+        @if (id() === null || id() === task.id) {
 
             <div class="border rounded p-3 gap-3 flex items-center justify-between">
 
-                @if (id !== task.id) {
-                    
-                    <input 
-                        type="checkbox"
-                        [checked]="task.isCompleted"
-                        (change)="toggleCompleted(task)"
-                    />
-                    <div class="border rounded gap-3 p-3 w-full" 
-                        [class.line-through]="task.isCompleted"
-                        [class.text-gray-500]="task.isCompleted">
-                        <p class="texl-xl font-bold">
-                            {{ task.title }}
-                        </p>
+                @if (id() === task.id) {
 
-                        <p class="mt-2">
-                            {{ task.description }}
-                        </p>
-                    </div>
+                    <div class="flex flex-col gap-3 w-full">
 
-                    <div class="flex gap-3">
-                        <button
-                        class="border rounded px-3 py-1 bg-gray-300"
-                        (click)="startUpdate(task)"
-                        >
-                        Edit
-                        </button>
+                        <label>
+                            Title:
+                        </label>
 
-                        <button
-                        class="border rounded px-3 py-1 bg-red-500"
-                        (click)="deleteTask(task.id)"
-                        >
-                        Delete
-                        </button>
-                    </div>
-                }
-
-                @else {
-
-                    <div class="flex gap-3 w-full">
                         <input
                         type="text"
                         class="border rounded p-2 w-full"
                         [(ngModel)]="title"
                         />
 
-                        <button
-                        class="border rounded px-3 py-1"
-                        (click)="updateTask(task.id)"
+                        <label>
+                            Description:
+                        </label>
+
+                        <textarea
+                        class="border rounded p-2 w-full"
+                        [(ngModel)]="description"
+                        ></textarea>
+
+                        <label>
+                            Due date:
+                        </label>
+
+                        <input 
+                        type="date" 
+                        [(ngModel)]="dueDate"
+                        />
+
+                        <label>
+                            Category:
+                        </label>
+
+                        <select
+                        class="border rounded p-2"
+                        [(ngModel)]="categoryId"
                         >
-                        Save
+
+                            <option [ngValue]="null">
+                                No category
+                            </option>
+
+                            @for (category of categories(); track category.id) {
+
+                                <option [ngValue]="category.id">
+                                    {{ category.name }}
+                                </option>
+
+                            }
+                        </select>
+
+                        <div class="flex gap-3">
+
+                            <button
+                            class="border rounded px-3 py-1"
+                            (click)="updateTask(task.id)"
+                            >
+                                Save
+                            </button>
+
+                            <button
+                            class="border rounded px-3 py-1"
+                            (click)="cancelEdit()"
+                            >
+                                Cancel
+                            </button>
+
+                        </div>
+
+                    </div>
+                }
+
+                @else {
+
+                    <input
+                    type="checkbox"
+                    [checked]="task.isCompleted"
+                    (change)="toggleCompleted(task)"
+                    />
+
+                    <div
+                    class="border rounded gap-3 p-3 w-full"
+                    [class.line-through]="task.isCompleted"
+                    [class.text-gray-500]="task.isCompleted"
+                    >
+
+                        <p class="text-xl font-bold">
+                            {{ task.title }}
+                        </p>
+
+                        <p class="mt-2">
+                            {{ task.description }}
+                        </p>
+
+                        <p>
+                            {{ task.dueDate | date:'dd.MM.yyyy HH:mm' }}
+                        </p>
+
+                        <p>
+                            {{ getCategoryName(task.categoryId) }}
+                        </p>
+
+                    </div>
+
+                    <div class="flex gap-3">
+
+                        <button
+                        class="border rounded px-3 py-1 bg-gray-300"
+                        (click)="startUpdate(task)"
+                        >
+                            Edit
                         </button>
 
                         <button
-                        class="border rounded px-3 py-1"
-                        (click)="cancelEdit()"
+                        class="border rounded px-3 py-1 bg-red-500"
+                        (click)="deleteTask(task.id)"
                         >
-                        Cancel
+                            Delete
                         </button>
+
                     </div>
                 }
             </div>
         }
-    </div>
+    }
+</div>
+
+<div class="flex gap-3 mt-4 items-center justify-center w-full">
+
+    <button
+    class="border rounded px-3 py-1"
+    (click)="previousPage()"
+    [disabled]="page === 1"
+    >
+        Previous
+    </button>
+
+    <p>
+        Page {{ page }}
+    </p>
+
+    <button
+    class="border rounded px-3 py-1"
+    (click)="nextPage()"
+    [disabled]="tasks()?.items?.length === 0"
+    >
+        Next
+    </button>
+
+</div>
