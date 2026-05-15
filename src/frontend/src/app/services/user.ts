@@ -25,4 +25,13 @@ export class UserService {
       body
     )
   }
+
+  deleteUser(password:string) {
+    return this.http.delete(
+      `${environment.apiUrl}/user/me`,
+    {
+      body: { password }
+    }
+  )
+  }
 }

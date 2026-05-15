@@ -35,10 +35,11 @@ namespace TodoApp.API.Controllers
         }
 
         [HttpDelete("me")]
-        public async Task<IActionResult> DeleteProfile()
+        public async Task<IActionResult> DeleteProfile([FromBody] DeleteAccountRequestDto requestDto)
         {
             var userId = User.GetUserId();
-            await _userService.DeleteUserAsync(userId);
+            await _userService.DeleteUserAsync(userId, requestDto);
+
             return NoContent();
         }
     }

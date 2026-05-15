@@ -9,11 +9,16 @@ namespace TodoApp.Services
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IAuthService _authService;
 
-        public UserService(IApplicationDbContext context, IMapper mapper)
+        public UserService(
+            IApplicationDbContext context, 
+            IMapper mapper, 
+            IAuthService authService)
         {
             _context = context;
             _mapper = mapper;
+            _authService = authService;
         }
 
         public async Task<UserProfileDto?> GetUserByIdAsync(int userId)
@@ -40,16 +45,22 @@ namespace TodoApp.Services
             return userDto;
         }
 
-        public async Task<bool> DeleteUserAsync(int userId)
+        public async Task DeleteUserAsync(int userId, DeleteAccountRequestDto requestDto)
         {
             var user = await _context.Users.FindAsync(userId);
             if (user == null)
                 throw new KeyNotFoundException("User is not found");
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            var rezult = await _authService.CheckPasswordAsync(requestDto.Password, userId);
 
-            return true;
+            if (!rezult)
+                throw new UnauthorizedAccessException("Invalid password.");
+
+            user.IsDeleted = true; //soft delete
+            user.DeletedAt = DateTime.UtcNow;
+            user.Email = $"deleted_{Guid.NewGuid():N}_{user.Email}"; //to prevent email conflicts in the future
+
+            await _context.SaveChangesAsync();
         }
     }
 }

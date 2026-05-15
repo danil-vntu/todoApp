@@ -7,6 +7,7 @@ import { Profile } from './pages/profile/profile';
 import { AuthGuard } from './guards/auth-guard';
 import { GuestGuard } from './guards/guest-guard';
 import { ChangePassword } from './pages/change-password/change-password';
+import { DeleteAccount } from './pages/delete-account/delete-account';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'tasks', pathMatch: 'full' },
@@ -18,6 +19,7 @@ export const routes: Routes = [
   { path: 'categories', component: Categories, canActivate: [AuthGuard] },
   { path: 'profile', component: Profile, canActivate: [AuthGuard] },
   { path: 'change-password', component: ChangePassword, canActivate: [AuthGuard] },
+  { path: 'delete-account', component: DeleteAccount, canActivate: [AuthGuard] },
   
   { path: '**', redirectTo: 'tasks' }
 ];

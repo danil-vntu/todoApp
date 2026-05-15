@@ -13,7 +13,7 @@ namespace TodoApp.Services
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
 
-        public AuthService(IApplicationDbContext context, 
+        public AuthService(IApplicationDbContext context,
             IPasswordHasher<User> passwordHasher, ITokenService tokenService,
             IMapper mapper)
         {
@@ -58,7 +58,7 @@ namespace TodoApp.Services
                 throw new ArgumentNullException(nameof(registerRequestDto));
             if (await ExistsByEmailAsync(registerRequestDto.Email))
                 throw new InvalidOperationException("Email already in use.");
-            if (string.IsNullOrWhiteSpace(registerRequestDto.Password) 
+            if (string.IsNullOrWhiteSpace(registerRequestDto.Password)
                 || registerRequestDto.Password.Length < 8)
                 throw new ArgumentException("Password must be " +
                     "at least 8 characters long.");
@@ -86,7 +86,7 @@ namespace TodoApp.Services
             return CreateAuthResponse(user);
         }
 
-        public async Task<string> ChangePassword(ChangePasswordDto changePasswordDto, int userId)
+        public async Task<string> ChangePasswordAsync(ChangePasswordDto changePasswordDto, int userId)
         {
             if (changePasswordDto == null)
                 throw new ArgumentNullException(nameof(changePasswordDto));
@@ -96,13 +96,27 @@ namespace TodoApp.Services
                 throw new KeyNotFoundException("User is not found.");
 
             if (_passwordHasher.VerifyHashedPassword
-                (user, user.PasswordHash, changePasswordDto.OldPassword) == 
+                (user, user.PasswordHash, changePasswordDto.OldPassword) ==
                 PasswordVerificationResult.Failed)
                 throw new InvalidOperationException("Invalid email or password.");
 
             user.PasswordHash = _passwordHasher.HashPassword(user, changePasswordDto.NewPassword);
             await _context.SaveChangesAsync();
             return "Password changed successfully.";
+        }
+
+        public async Task<bool> CheckPasswordAsync(string password, int userId)
+        {
+            var user = await GetUserByIdAsync(userId);
+            if (user == null)
+                throw new KeyNotFoundException("User is not found.");
+
+            if (_passwordHasher.VerifyHashedPassword
+                (user, user.PasswordHash, password) ==
+                PasswordVerificationResult.Failed)
+                return false;
+
+            return true;
         }
     }
 }

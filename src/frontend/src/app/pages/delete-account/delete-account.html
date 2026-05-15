@@ -1,0 +1,38 @@
+<div class="border p-4">
+    <p class="text-sm mt-4">
+        Are you shore you want to delete your account? You can`t undo this action!!!
+    </p>
+</div>
+
+<div class="flex flex-col gap-3 mt-4 items-center">
+    <p>
+        If so, please, put your password firstly:
+    </p>>
+
+    <input
+    type="password"
+    placeholder="Password..." 
+    class="border p-3 rounded w-60" 
+    [(ngModel)]="password"
+    />
+
+    @if(password.length >0 && password.length<8) {
+        <p class="text-red-500">
+            Password must be at least 8 charachters.
+        </p>
+    }
+
+    @if (errorMessage()) {
+        <p class="text-red-500">
+            {{ errorMessage() }}
+        </p>
+    }
+
+    <button 
+    class="border p-3 rounded w-60 bg-red-500" 
+    (click)="deleteAccount()"
+    [disabled]="password.length >0 && password.length<8"
+    >
+        Delete your account (forever)
+    </button>
+</div>

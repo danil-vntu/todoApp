@@ -6,6 +6,6 @@ namespace TodoApp.Interfaces.Interfaces
     {
         Task<UserProfileDto?> GetUserByIdAsync(int userId);
         Task<UserProfileDto?> UpdateUserAsync(UserUpdateDto userUpdateDto, int userId);
-        Task<bool> DeleteUserAsync(int userId);
+        Task DeleteUserAsync(int userId, DeleteAccountRequestDto requestDto);
     }
 }

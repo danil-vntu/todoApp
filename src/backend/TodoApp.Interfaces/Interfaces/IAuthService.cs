@@ -5,6 +5,7 @@ namespace TodoApp.Interfaces.Interfaces
     {
         Task<AuthResponseDto> RegisterAsync(RegisterRequestDto registerRequestDto);
         Task<AuthResponseDto> LoginAsync(LoginRequestDto loginRequestDto);
-        Task<string> ChangePassword(ChangePasswordDto changePasswordDto, int userId);
+        Task<string> ChangePasswordAsync(ChangePasswordDto changePasswordDto, int userId);
+        Task<bool> CheckPasswordAsync(string password, int userId);
     }
 }

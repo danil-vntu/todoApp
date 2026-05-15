@@ -23,6 +23,12 @@ namespace TodoApp.DataAccess
                 .WithMany(c => c.Tasks)
                 .HasForeignKey(t => t.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
