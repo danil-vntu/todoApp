@@ -81,12 +81,15 @@ namespace TodoApp.API
 
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AngularClient", policy =>
-                {
-                    policy.WithOrigins("http://localhost:4200")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
-                });
+                options.AddPolicy("AllowFrontend",
+                    policy =>
+                    {
+                        policy.WithOrigins(
+                            "http://localhost:4200",
+                            "https://northtodo.vercel.app")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                    });
             });
 
             builder.Services.AddSwaggerGen(options =>

@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: 'https://localhost:7178/api'
+  apiUrl: 'https://northtodo-backend.onrender.com'
 };
