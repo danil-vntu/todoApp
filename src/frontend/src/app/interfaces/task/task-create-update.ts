@@ -1,7 +1,7 @@
 export interface TaskCreateUpdate {
-    title: string;
-    description: string | null;
-    isCompleted: boolean;
-    dueDate: string;
-    categoryId: number | null;
+  title: string;
+  description: string | null;
+  isCompleted: boolean;
+  dueDate: string | null;
+  categoryId: number | null;
 }

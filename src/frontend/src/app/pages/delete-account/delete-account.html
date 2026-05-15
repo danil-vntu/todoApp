@@ -1,38 +1,44 @@
-<div class="border p-4">
-    <p class="text-sm mt-4">
-        Are you shore you want to delete your account? You can`t undo this action!!!
-    </p>
-</div>
+<div class="mx-auto max-w-md">
+    <div class="rounded-2xl border border-red-200 bg-white p-6 shadow-sm dark:border-red-900 dark:bg-slate-900">
+        <h1 class="text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">
+            Delete account
+        </h1>
 
-<div class="flex flex-col gap-3 mt-4 items-center">
-    <p>
-        If so, please, put your password firstly:
-    </p>>
-
-    <input
-    type="password"
-    placeholder="Password..." 
-    class="border p-3 rounded w-60" 
-    [(ngModel)]="password"
-    />
-
-    @if(password.length >0 && password.length<8) {
-        <p class="text-red-500">
-            Password must be at least 8 charachters.
+        <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">
+            Are you sure you want to delete your account? You cannot undo this action.
         </p>
-    }
 
-    @if (errorMessage()) {
-        <p class="text-red-500">
-            {{ errorMessage() }}
-        </p>
-    }
+        <div class="mt-6 flex flex-col gap-4">
+            <p class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                Please enter your password to continue:
+            </p>
 
-    <button 
-    class="border p-3 rounded w-60 bg-red-500" 
-    (click)="deleteAccount()"
-    [disabled]="password.length >0 && password.length<8"
-    >
-        Delete your account (forever)
-    </button>
+            <input
+            type="password"
+            placeholder="Password..."
+            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500"
+            [(ngModel)]="password"
+            />
+
+            @if(password.length >0 && password.length<8) {
+                <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
+                    Password must be at least 8 characters.
+                </p>
+            }
+
+            @if (errorMessage()) {
+                <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
+                    {{ errorMessage() }}
+                </p>
+            }
+
+            <button
+            class="w-full rounded-xl bg-red-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
+            (click)="deleteAccount()"
+            [disabled]="password.length >0 && password.length<8"
+            >
+                Delete your account
+            </button>
+        </div>
+    </div>
 </div>

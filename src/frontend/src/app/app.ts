@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Navbar } from './components/navbar/navbar';
+import { ThemeService } from './services/theme';
 
 @Component({
   selector: 'app-root',
@@ -10,4 +11,6 @@ import { Navbar } from './components/navbar/navbar';
 })
 export class App {
   protected readonly title = signal('frontend');
+
+  constructor(private themeService: ThemeService) {}
 }

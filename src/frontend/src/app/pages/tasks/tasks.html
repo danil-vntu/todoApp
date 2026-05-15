@@ -1,237 +1,365 @@
-<div class="border rounded p-3 gap-3 flex items-center justify-between">
+<div class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">Tasks</h1>
 
-    <div class="flex flex-col gap-3 w-full">
+      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        Create, edit, and keep your todos organized.
+      </p>
+    </div>
 
-        <label>
-            Title:
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div
+        class="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400"
+      >
+        Page {{ page }}
+      </div>
+
+      <button
+        class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+        (click)="openCreateModal()"
+      >
+        Add task
+      </button>
+    </div>
+  </div>
+
+  @if (successMessage) {
+    <p
+      class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300"
+    >
+      {{ successMessage }}
+    </p>
+  }
+
+  @if (errorMessage) {
+    <p
+      class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+    >
+      {{ errorMessage }}
+    </p>
+  }
+
+  <div
+    class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+  >
+    <div class="flex flex-col gap-3 lg:flex-row lg:items-start">
+      <div class="w-full">
+        <label class="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+          Search tasks
         </label>
 
         <input
-        type="text"
-        class="border rounded p-2 w-full"
-        [(ngModel)]="title"
+          type="text"
+          placeholder="Search by title..."
+          class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500"
+          [(ngModel)]="search"
+          (ngModelChange)="applyFilters()"
         />
+      </div>
 
-        <label>
-            Description:
+      <div class="relative w-full lg:max-w-xs">
+        <label class="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+          Categories
         </label>
 
-        <textarea
-        class="border rounded p-2 w-full"
-        [(ngModel)]="description"
-        ></textarea>
-
-        <label>
-            Due date:
-        </label>
-
-        <input 
-        type="date" 
-        [(ngModel)]="dueDate"
-        />
-
-        <label>
-            Category:
-        </label>
-
-        <select
-        class="border rounded p-2"
-        [(ngModel)]="categoryId"
+        <button
+          class="flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-900"
+          (click)="toggleCategoryDropdown()"
         >
+          <span>{{ selectedCategoryLabel() }}</span>
 
-            <option [ngValue]="null">
-                No category
-            </option>
+          <svg
+            class="h-4 w-4 text-slate-400"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </button>
 
-            @for (category of categories(); track category.id) {
+        @if (isCategoryFilterOpen) {
+          <div
+            class="absolute right-0 z-20 mt-2 w-full rounded-xl border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-800 dark:bg-slate-900"
+          >
+            <div class="mb-2 flex items-center justify-between gap-2">
+              <button
+                class="rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                (click)="selectAllCategories()"
+              >
+                Select all
+              </button>
 
-                <option [ngValue]="category.id">
-                    {{ category.name }}
-                </option>
-
-            }
-        </select>
-
-        <div class="flex gap-3">
-
-            <button
-            class="border rounded px-3 py-1"
-            (click)="createTask()"
-            >
-                Save
-            </button>
-
-            <button
-            class="border rounded px-3 py-1"
-            (click)="cancelEdit()"
-            >
-                Cancel
-            </button>
-
-        </div>
-
-    </div>
-</div>
-
-
-<div class="flex flex-col gap-3 mt-4">
-
-    @for (task of tasks()?.items; track task.id) {
-
-        @if (id() === null || id() === task.id) {
-
-            <div class="border rounded p-3 gap-3 flex items-center justify-between">
-
-                @if (id() === task.id) {
-
-                    <div class="flex flex-col gap-3 w-full">
-
-                        <label>
-                            Title:
-                        </label>
-
-                        <input
-                        type="text"
-                        class="border rounded p-2 w-full"
-                        [(ngModel)]="title"
-                        />
-
-                        <label>
-                            Description:
-                        </label>
-
-                        <textarea
-                        class="border rounded p-2 w-full"
-                        [(ngModel)]="description"
-                        ></textarea>
-
-                        <label>
-                            Due date:
-                        </label>
-
-                        <input 
-                        type="date" 
-                        [(ngModel)]="dueDate"
-                        />
-
-                        <label>
-                            Category:
-                        </label>
-
-                        <select
-                        class="border rounded p-2"
-                        [(ngModel)]="categoryId"
-                        >
-
-                            <option [ngValue]="null">
-                                No category
-                            </option>
-
-                            @for (category of categories(); track category.id) {
-
-                                <option [ngValue]="category.id">
-                                    {{ category.name }}
-                                </option>
-
-                            }
-                        </select>
-
-                        <div class="flex gap-3">
-
-                            <button
-                            class="border rounded px-3 py-1"
-                            (click)="updateTask(task.id)"
-                            >
-                                Save
-                            </button>
-
-                            <button
-                            class="border rounded px-3 py-1"
-                            (click)="cancelEdit()"
-                            >
-                                Cancel
-                            </button>
-
-                        </div>
-
-                    </div>
-                }
-
-                @else {
-
-                    <input
-                    type="checkbox"
-                    [checked]="task.isCompleted"
-                    (change)="toggleCompleted(task)"
-                    />
-
-                    <div
-                    class="border rounded gap-3 p-3 w-full"
-                    [class.line-through]="task.isCompleted"
-                    [class.text-gray-500]="task.isCompleted"
-                    >
-
-                        <p class="text-xl font-bold">
-                            {{ task.title }}
-                        </p>
-
-                        <p class="mt-2">
-                            {{ task.description }}
-                        </p>
-
-                        <p>
-                            {{ task.dueDate | date:'dd.MM.yyyy HH:mm' }}
-                        </p>
-
-                        <p>
-                            {{ getCategoryName(task.categoryId) }}
-                        </p>
-
-                    </div>
-
-                    <div class="flex gap-3">
-
-                        <button
-                        class="border rounded px-3 py-1 bg-gray-300"
-                        (click)="startUpdate(task)"
-                        >
-                            Edit
-                        </button>
-
-                        <button
-                        class="border rounded px-3 py-1 bg-red-500"
-                        (click)="deleteTask(task.id)"
-                        >
-                            Delete
-                        </button>
-
-                    </div>
-                }
+              <button
+                class="rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                (click)="clearAllCategories()"
+              >
+                Clear all
+              </button>
             </div>
+
+            <div class="max-h-56 space-y-1 overflow-y-auto">
+              @for (category of categories(); track category.id) {
+                <label
+                  class="flex cursor-pointer items-center gap-3 rounded-lg px-2.5 py-2 text-sm text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
+                >
+                  <input
+                    type="checkbox"
+                    class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-950"
+                    [checked]="selectedCategoryIds.includes(category.id)"
+                    (change)="toggleSearchCategory(category.id)"
+                  />
+
+                  <span class="min-w-0 truncate">{{ category.name }}</span>
+                </label>
+              }
+            </div>
+          </div>
         }
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-3">
+    @for (task of filteredTasks(); track task.id) {
+      <div
+        class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition dark:border-slate-800 dark:bg-slate-900"
+        [class.opacity-70]="task.isCompleted"
+        [class.bg-slate-50]="task.isCompleted"
+        [class.dark:bg-slate-900/60]="task.isCompleted"
+      >
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start">
+          <input
+            type="checkbox"
+            class="mt-1 h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-950"
+            [checked]="task.isCompleted"
+            (change)="toggleCompleted(task)"
+          />
+
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <p
+                class="break-words text-lg font-semibold text-slate-950 dark:text-white"
+                [class.line-through]="task.isCompleted"
+                [class.decoration-2]="task.isCompleted"
+                [class.text-slate-400]="task.isCompleted"
+                [class.dark:text-slate-500]="task.isCompleted"
+              >
+                {{ task.title }}
+              </p>
+
+              @if (task.isCompleted) {
+                <span
+                  class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
+                >
+                  Completed
+                </span>
+              }
+            </div>
+
+            <p
+              class="mt-2 break-words text-sm leading-6 text-slate-600 dark:text-slate-400"
+              [class.line-through]="task.isCompleted"
+              [class.decoration-2]="task.isCompleted"
+              [class.text-slate-400]="task.isCompleted"
+              [class.dark:text-slate-500]="task.isCompleted"
+            >
+              {{ task.description }}
+            </p>
+
+            <div class="mt-4 flex flex-wrap gap-2 text-xs font-medium">
+              @if (task.dueDate) {
+                <p
+                  class="rounded-full bg-slate-100 px-3 py-1 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                >
+                  Due {{ task.dueDate | date: 'dd.MM.yyyy' }}
+                </p>
+              } @else {
+                <p
+                  class="rounded-full bg-slate-100 px-3 py-1 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+                >
+                  No due date
+                </p>
+              }
+
+              <p
+                class="rounded-full bg-blue-50 px-3 py-1 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300"
+              >
+                {{ getCategoryName(task.categoryId) }}
+              </p>
+            </div>
+          </div>
+
+          <div class="flex gap-2 sm:justify-end">
+            <button
+              class="rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+              (click)="startUpdate(task)"
+            >
+              Edit
+            </button>
+
+            <button
+              class="rounded-xl bg-red-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
+              (click)="deleteTask(task.id)"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
     }
-</div>
+  </div>
 
-<div class="flex gap-3 mt-4 items-center justify-center w-full">
-
+  <div
+    class="flex flex-col items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row dark:border-slate-800 dark:bg-slate-900"
+  >
     <button
-    class="border rounded px-3 py-1"
-    (click)="previousPage()"
-    [disabled]="page === 1"
+      class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+      (click)="previousPage()"
+      [disabled]="page === 1"
     >
-        Previous
+      Previous
     </button>
 
-    <p>
-        Page {{ page }}
+    <p class="min-w-24 text-center text-sm font-medium text-slate-600 dark:text-slate-400">
+      Page {{ page }}
     </p>
 
     <button
-    class="border rounded px-3 py-1"
-    (click)="nextPage()"
-    [disabled]="tasks()?.items?.length === 0"
+      class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+      (click)="nextPage()"
+      [disabled]="tasks()?.items?.length === 0"
     >
-        Next
+      Next
     </button>
-
+  </div>
 </div>
+
+@if (isTaskModalOpen) {
+  <div
+    class="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/60 px-4 py-6 sm:items-center"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div
+      class="w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-5 shadow-xl dark:border-slate-800 dark:bg-slate-900"
+    >
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">
+            @if (id() === null) {
+              Add task
+            } @else {
+              Edit task
+            }
+          </h2>
+
+          <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            Keep the details short and clear. Due date is optional.
+          </p>
+        </div>
+
+        <button
+          class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+          (click)="cancelEdit()"
+        >
+          Close
+        </button>
+      </div>
+
+      <div class="mt-5 grid gap-4 md:grid-cols-2">
+        <div class="md:col-span-2">
+          <label class="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+            Title
+          </label>
+
+          <input
+            type="text"
+            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500"
+            [(ngModel)]="title"
+          />
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+            Description
+          </label>
+
+          <textarea
+            class="min-h-28 w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500"
+            [(ngModel)]="description"
+          ></textarea>
+        </div>
+
+        <div>
+          <div class="mb-1.5 flex items-center justify-between gap-3">
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Due date
+            </label>
+
+            <span class="text-xs text-slate-500 dark:text-slate-400"> Optional </span>
+          </div>
+
+          <input
+            type="date"
+            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+            [(ngModel)]="dueDate"
+          />
+
+          <p class="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+            Pick a date from the calendar or leave it empty.
+          </p>
+        </div>
+
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+            Category
+          </label>
+
+          <select
+            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+            [(ngModel)]="categoryId"
+          >
+            <option [ngValue]="null">No category</option>
+
+            @for (category of categories(); track category.id) {
+              <option [ngValue]="category.id">
+                {{ category.name }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <button
+          class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+          (click)="cancelEdit()"
+        >
+          Cancel
+        </button>
+
+        @if (id() === null) {
+          <button
+            class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+            (click)="createTask()"
+          >
+            Save task
+          </button>
+        } @else {
+          <button
+            class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+            (click)="updateTask(id()!)"
+          >
+            Save changes
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

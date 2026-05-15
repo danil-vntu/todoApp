@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { ThemeService } from '../../services/theme';
 
 @Component({
   selector: 'app-navbar',
@@ -7,14 +8,33 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-
 export class Navbar {
+  isLogoutConfirmationOpen = false;
+
+  constructor(public themeService: ThemeService) {}
+
   isAuthenticated() {
-    return localStorage.getItem("token") !== null;
+    return localStorage.getItem('token') !== null;
   }
 
-  logout() {
-    localStorage.removeItem("token");
+  isDark() {
+    return this.themeService.isDark();
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
+  }
+
+  requestLogout() {
+    this.isLogoutConfirmationOpen = true;
+  }
+
+  cancelLogout() {
+    this.isLogoutConfirmationOpen = false;
+  }
+
+  confirmLogout() {
+    localStorage.removeItem('token');
     window.location.reload();
   }
 }
