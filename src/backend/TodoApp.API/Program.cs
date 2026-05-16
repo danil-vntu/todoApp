@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 using TodoApp.Interfaces.Mapping;
@@ -42,6 +43,8 @@ namespace TodoApp.API
                 .AddJwtBearer(options =>
                 {
                     var key = builder.Configuration["Jwt:Key"];
+                    if (string.IsNullOrWhiteSpace(key))
+                        throw new InvalidOperationException("JWT key is not configured.");
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -60,6 +63,22 @@ namespace TodoApp.API
 
                     options.Events = new JwtBearerEvents
                     {
+                        OnTokenValidated = async context =>
+                        {
+                            var userIdClaim = context.Principal?.FindFirst(ClaimTypes.NameIdentifier);
+                            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+                            {
+                                context.Fail("Invalid token.");
+                                return;
+                            }
+
+                            var dbContext = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
+                            var isActiveUser = await dbContext.Users
+                                .AnyAsync(u => u.Id == userId && !u.IsDeleted);
+
+                            if (!isActiveUser)
+                                context.Fail("User is not active.");
+                        },
                         OnChallenge = context =>
                         {
                             context.HandleResponse();

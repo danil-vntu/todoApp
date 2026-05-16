@@ -10,6 +10,7 @@ namespace TodoApp.Interfaces.DTOs.Auth
         public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = "Required field!")]
+        [MaxLength(100, ErrorMessage = "Name cannot be longer than 100 characters.")]
         public string Name { get; set; } = null!;
 
         [Required(ErrorMessage = "Required field!")]

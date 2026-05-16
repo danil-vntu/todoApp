@@ -30,7 +30,7 @@ export class TaskService {
 
   createTask(body: TaskCreateUpdate) {
     return this.http.post
-    <TaskListQuery>(
+    <TaskResponse>(
       `${environment.apiUrl}/Task`,
       body
     )
@@ -38,7 +38,7 @@ export class TaskService {
 
   updateTask(body: TaskCreateUpdate, id: number | null) {
     return this.http.put
-    <TaskListQuery>(
+    <TaskResponse>(
       `${environment.apiUrl}/Task/${id}`,
       body
     )

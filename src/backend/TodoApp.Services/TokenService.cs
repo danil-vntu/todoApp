@@ -20,6 +20,10 @@ namespace TodoApp.Services
 
         public JwtTokenResult CreateToken(User user)
         {
+            var jwtKey = _configuration["Jwt:Key"];
+            if (string.IsNullOrWhiteSpace(jwtKey))
+                throw new InvalidOperationException("JWT key is not configured.");
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -28,7 +32,7 @@ namespace TodoApp.Services
 
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(
-                    _configuration["Jwt:Key"]
+                    jwtKey
                 )
             );
 
