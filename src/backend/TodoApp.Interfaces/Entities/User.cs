@@ -1,11 +1,21 @@
-﻿namespace TodoApp.Interfaces.Entities
+using System.ComponentModel.DataAnnotations;
+
+namespace TodoApp.Interfaces.Entities
 {
     public class User
     {
         public int Id { get; set; }
 
-        public string? Name { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; } = null!;
+
+        [Required]
+        [MaxLength(450)]
         public string Email { get; set; } = null!;
+
+        [Required]
+        [MaxLength(500)]
         public string PasswordHash { get; set; } = null!;
 
         public bool IsDeleted { get; set; } = false;

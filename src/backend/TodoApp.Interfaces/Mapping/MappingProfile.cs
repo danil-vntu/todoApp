@@ -3,6 +3,7 @@ using TodoApp.Interfaces.DTOs.Categories;
 using TodoApp.Interfaces.DTOs.Auth;
 using TodoApp.Interfaces.DTOs.Users;
 using TodoApp.Interfaces.DTOs.Tasks;
+using TodoApp.Interfaces.Models;
 
 using AutoMapper;
 
@@ -15,6 +16,8 @@ namespace TodoApp.Interfaces.Mapping
             CreateMap<RegisterRequestDto, User>()
                 .ForMember(m => m.PasswordHash, opt => opt.Ignore())
                 .ForMember(m => m.Id, opt => opt.Ignore());
+
+            CreateMap<JwtTokenResult, AuthResponseDto>();
 
             CreateMap<CategoryCreateUpdateDto, Category>()
                 .ForMember(m => m.Id, opt => opt.Ignore())

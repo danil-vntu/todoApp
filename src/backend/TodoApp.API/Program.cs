@@ -11,7 +11,6 @@ using TodoApp.Interfaces.Entities;
 using Microsoft.OpenApi.Models;
 using TodoApp.Interfaces.Interfaces;
 using TodoApp.API.Middlewares;
-using Azure;
 
 namespace TodoApp.API
 {

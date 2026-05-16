@@ -27,11 +27,7 @@ namespace TodoApp.Services
         {
             var tokenResult = _tokenService.CreateToken(user);
 
-            return new AuthResponseDto
-            {
-                Token = tokenResult.Token,
-                Expiration = tokenResult.Expiration
-            };
+            return _mapper.Map<AuthResponseDto>(tokenResult);
         }
 
         private async Task<User?> GetUserByIdAsync(int userId)
