@@ -134,7 +134,7 @@ namespace TodoApp.API
 
             app.UseHttpsRedirection();
 
-            app.UseCors("AngularClient");
+            app.UseCors("AllowFrontend");
 
             app.UseAuthentication();
             app.UseAuthorization();
