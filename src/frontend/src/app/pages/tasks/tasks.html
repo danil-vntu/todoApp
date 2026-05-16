@@ -138,6 +138,7 @@
             type="checkbox"
             class="mt-1 h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-950"
             [checked]="task.isCompleted"
+            [disabled]="togglingTaskIds.has(task.id)"
             (change)="toggleCompleted(task)"
           />
 
@@ -206,8 +207,9 @@
             <button
               class="rounded-xl bg-red-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
               (click)="deleteTask(task.id)"
+              [disabled]="deletingTaskIds.has(task.id)"
             >
-              Delete
+              {{ deletingTaskIds.has(task.id) ? 'Deleting...' : 'Delete' }}
             </button>
           </div>
         </div>
@@ -272,6 +274,14 @@
         </button>
       </div>
 
+      @if (errorMessage) {
+        <p
+          class="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+        >
+          {{ errorMessage }}
+        </p>
+      }
+
       <div class="mt-5 grid gap-4 md:grid-cols-2">
         <div class="md:col-span-2">
           <label class="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -281,8 +291,19 @@
           <input
             type="text"
             class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500"
+            maxlength="200"
             [(ngModel)]="title"
           />
+
+          @if (title.length > 0 && title.trim().length === 0) {
+            <p class="mt-2 text-sm text-red-600 dark:text-red-400">Title is required.</p>
+          }
+
+          @if (title.length > 200) {
+            <p class="mt-2 text-sm text-red-600 dark:text-red-400">
+              Title cannot be longer than 200 characters.
+            </p>
+          }
         </div>
 
         <div class="md:col-span-2">
@@ -292,8 +313,15 @@
 
           <textarea
             class="min-h-28 w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500"
+            maxlength="2000"
             [(ngModel)]="description"
           ></textarea>
+
+          @if (description.length > 2000) {
+            <p class="mt-2 text-sm text-red-600 dark:text-red-400">
+              Description cannot be longer than 2000 characters.
+            </p>
+          }
         </div>
 
         <div>
@@ -346,17 +374,19 @@
 
         @if (id() === null) {
           <button
-            class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+            class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
             (click)="createTask()"
+            [disabled]="isTaskFormInvalid() || isSavingTask"
           >
-            Save task
+            {{ isSavingTask ? 'Saving...' : 'Save task' }}
           </button>
         } @else {
           <button
-            class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+            class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
             (click)="updateTask(id()!)"
+            [disabled]="isTaskFormInvalid() || isSavingTask"
           >
-            Save changes
+            {{ isSavingTask ? 'Saving...' : 'Save changes' }}
           </button>
         }
       </div>

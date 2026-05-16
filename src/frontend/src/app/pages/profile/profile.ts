@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 
 import { UserService } from '../../services/user';
 import { RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
+import { getErrorMessage } from '../../utils/http-error-message';
 
 @Component({
   selector: 'app-profile',
@@ -23,6 +25,8 @@ export class Profile implements OnInit {
   createdAt=signal("")
 
   newName=""
+  isSubmitting = false
+  errorMessage=signal("")
 
   ngOnInit() {
     console.log('PROFILE INIT');
@@ -43,12 +47,22 @@ export class Profile implements OnInit {
     })
   }
 
+  isNameInvalid() {
+    return this.newName.trim().length === 0 || this.newName.length > 100;
+  }
+
   updateUser() {
+    if (this.isSubmitting || this.isNameInvalid()) return;
+
+    this.isSubmitting = true;
+    this.errorMessage.set("");
+
     const body = {
       name: this.newName
     }
 
     this.userService.updateUser(body)
+    .pipe(finalize(() => this.isSubmitting = false))
     .subscribe({
       next: (response) => {
         console.log(response);
@@ -57,6 +71,7 @@ export class Profile implements OnInit {
       },
       error: (error) => {
         console.log(error);
+        this.errorMessage.set(getErrorMessage(error));
       }
     })
   }

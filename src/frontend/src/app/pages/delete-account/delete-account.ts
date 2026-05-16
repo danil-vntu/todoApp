@@ -1,12 +1,14 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
 
 import { UserService } from '../../services/user';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { getErrorMessage } from '../../utils/http-error-message';
 
 @Component({
   selector: 'app-delete-account',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule],
   templateUrl: './delete-account.html',
   styleUrl: './delete-account.css',
 })
@@ -17,10 +19,21 @@ export class DeleteAccount {
     private router: Router) {}
 
   password= ""
+  isSubmitting = false
   errorMessage=signal("")
 
+  isFormInvalid() {
+    return this.password.length < 8;
+  }
+
   deleteAccount() {
+    if (this.isSubmitting || this.isFormInvalid()) return;
+
+    this.isSubmitting = true;
+    this.errorMessage.set("");
+
     this.userService.deleteUser(this.password)
+    .pipe(finalize(() => this.isSubmitting = false))
     .subscribe({
       next: () => {
         console.log("DELETED!");
@@ -30,7 +43,7 @@ export class DeleteAccount {
       },
       error: (error) => {
         console.log(error);
-        this.errorMessage.set(error.error.message);
+        this.errorMessage.set(getErrorMessage(error));
       }
     })
   }

@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { finalize } from 'rxjs';
 
 import { TaskService } from '../../services/task';
 import { CategoryService } from '../../services/category';
@@ -9,6 +10,7 @@ import { TaskResponse } from '../../interfaces/task/task-response';
 import { PagedResult } from '../../interfaces/paging/paged-result';
 import { TaskCreateUpdate } from '../../interfaces/task/task-create-update';
 import { DatePipe } from '@angular/common';
+import { getErrorMessage } from '../../utils/http-error-message';
 
 @Component({
   selector: 'app-tasks',
@@ -35,6 +37,9 @@ export class Tasks implements OnInit {
   dueDate = '';
   categoryId: number | null = null;
   isTaskModalOpen = false;
+  isSavingTask = false;
+  deletingTaskIds = new Set<number>();
+  togglingTaskIds = new Set<number>();
 
   // newTitle = '';
   // newDescription = '';
@@ -83,10 +88,16 @@ export class Tasks implements OnInit {
   private showError(error: HttpErrorResponse) {
     console.log(error);
 
-    this.errorMessage = error.error.message;
+    this.errorMessage = getErrorMessage(error);
     setTimeout(() => {
       this.errorMessage = '';
     }, 5000);
+  }
+
+  isTaskFormInvalid() {
+    return this.title.trim().length === 0 ||
+      this.title.length > 200 ||
+      this.description.length > 2000;
   }
 
   constructor(
@@ -205,9 +216,16 @@ export class Tasks implements OnInit {
   }
 
   createTask() {
+    if (this.isSavingTask || this.isTaskFormInvalid()) return;
+
+    this.isSavingTask = true;
+    this.errorMessage = '';
+
     const body = this.mapForm();
 
-    this.taskService.createTask(body).subscribe({
+    this.taskService.createTask(body)
+    .pipe(finalize(() => this.isSavingTask = false))
+    .subscribe({
       next: () => {
         const message = 'Created';
         this.handleSuccess(message);
@@ -239,13 +257,18 @@ export class Tasks implements OnInit {
   }
 
   updateTask(id: number) {
-    if (id === null) return;
+    if (id === null || this.isSavingTask || this.isTaskFormInvalid()) return;
+
+    this.isSavingTask = true;
+    this.errorMessage = '';
 
     const body = this.mapForm();
 
     //const id = this.id
 
-    this.taskService.updateTask(body, id).subscribe({
+    this.taskService.updateTask(body, id)
+    .pipe(finalize(() => this.isSavingTask = false))
+    .subscribe({
       next: () => {
         const message = 'Updated';
         this.handleSuccess(message);
@@ -257,6 +280,11 @@ export class Tasks implements OnInit {
   }
 
   toggleCompleted(task: TaskResponse) {
+    if (this.togglingTaskIds.has(task.id)) return;
+
+    this.togglingTaskIds.add(task.id);
+    this.errorMessage = '';
+
     const body = {
       title: task.title,
       description: task.description,
@@ -265,7 +293,9 @@ export class Tasks implements OnInit {
       categoryId: task.categoryId,
     };
 
-    this.taskService.updateTask(body, task.id).subscribe({
+    this.taskService.updateTask(body, task.id)
+    .pipe(finalize(() => this.togglingTaskIds.delete(task.id)))
+    .subscribe({
       next: () => {
         this.loadTasks();
       },
@@ -276,9 +306,14 @@ export class Tasks implements OnInit {
   }
 
   deleteTask(id: number) {
-    if (id === null) return;
+    if (id === null || this.deletingTaskIds.has(id)) return;
 
-    this.taskService.deleteTask(id).subscribe({
+    this.deletingTaskIds.add(id);
+    this.errorMessage = '';
+
+    this.taskService.deleteTask(id)
+    .pipe(finalize(() => this.deletingTaskIds.delete(id)))
+    .subscribe({
       next: () => {
         const message = 'Deleted';
         this.handleSuccess(message);

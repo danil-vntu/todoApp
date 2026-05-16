@@ -10,26 +10,37 @@
   <div
     class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
   >
+    @if (errorMessage) {
+      <p
+        class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+      >
+        {{ errorMessage }}
+      </p>
+    }
+
     <div class="flex flex-col gap-3 sm:flex-row sm:items-start">
       <div class="w-full">
         <input
           type="text"
           placeholder="Category name..."
           class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500"
+          maxlength="100"
           [(ngModel)]="categoryName"
         />
 
         @if (categoryName.length > 0 && isCategoryNameInvalid()) {
-          <p class="mt-2 text-sm text-red-600 dark:text-red-400">Category name cannot be empty.</p>
+          <p class="mt-2 text-sm text-red-600 dark:text-red-400">
+            Category name is required and cannot be longer than 100 characters.
+          </p>
         }
       </div>
 
       <button
         class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 sm:w-auto dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
         (click)="createCategory()"
-        [disabled]="isCategoryNameInvalid()"
+        [disabled]="isCategoryNameInvalid() || isCreatingCategory"
       >
-        Add
+        {{ isCreatingCategory ? 'Adding...' : 'Add' }}
       </button>
     </div>
   </div>
@@ -54,10 +65,11 @@
               </button>
 
               <button
-                class="rounded-xl bg-red-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
+                class="rounded-xl bg-red-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
                 (click)="deleteCategory(category.id)"
+                [disabled]="deletingCategoryIds.has(category.id)"
               >
-                Delete
+                {{ deletingCategoryIds.has(category.id) ? 'Deleting...' : 'Delete' }}
               </button>
             </div>
           </div>
@@ -67,12 +79,13 @@
               <input
                 type="text"
                 class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+                maxlength="100"
                 [(ngModel)]="editingCategoryName"
               />
 
               @if (editingCategoryName.length > 0 && isEditingCategoryNameInvalid()) {
                 <p class="mt-2 text-sm text-red-600 dark:text-red-400">
-                  Category name cannot be empty.
+                  Category name is required and cannot be longer than 100 characters.
                 </p>
               }
             </div>
@@ -80,9 +93,9 @@
             <button
               class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
               (click)="saveEdit(category.id)"
-              [disabled]="isEditingCategoryNameInvalid()"
+              [disabled]="isEditingCategoryNameInvalid() || isSavingCategory"
             >
-              Save
+              {{ isSavingCategory ? 'Saving...' : 'Save' }}
             </button>
 
             <button

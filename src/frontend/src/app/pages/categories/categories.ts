@@ -1,9 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
 
 import { CategoryService } from '../../services/category';
 
 import { CategoryResponse } from '../../interfaces/category/category-response';
+import { getErrorMessage } from '../../utils/http-error-message';
 
 @Component({
   selector: 'app-categories',
@@ -18,13 +20,17 @@ export class Categories implements OnInit {
   categoryName = '';
   editingCategoryId: number | null = null;
   editingCategoryName = '';
+  errorMessage = '';
+  isCreatingCategory = false;
+  isSavingCategory = false;
+  deletingCategoryIds = new Set<number>();
 
   isCategoryNameInvalid() {
-    return this.categoryName.trim().length === 0;
+    return this.categoryName.trim().length === 0 || this.categoryName.length > 100;
   }
 
   isEditingCategoryNameInvalid() {
-    return this.editingCategoryName.trim().length === 0;
+    return this.editingCategoryName.trim().length === 0 || this.editingCategoryName.length > 100;
   }
 
   ngOnInit() {
@@ -38,11 +44,17 @@ export class Categories implements OnInit {
       },
       error: (error) => {
         console.log(error);
+        this.errorMessage = getErrorMessage(error);
       },
     });
   }
 
   createCategory() {
+    if (this.isCreatingCategory || this.isCategoryNameInvalid()) return;
+
+    this.isCreatingCategory = true;
+    this.errorMessage = '';
+
     const name = this.categoryName.trim();
 
     if (!name) return;
@@ -51,7 +63,9 @@ export class Categories implements OnInit {
       name,
     };
 
-    this.categoryService.createCategory(body).subscribe({
+    this.categoryService.createCategory(body)
+    .pipe(finalize(() => this.isCreatingCategory = false))
+    .subscribe({
       next: (response) => {
         this.categories.update((categories) => [...categories, response]);
 
@@ -59,6 +73,7 @@ export class Categories implements OnInit {
       },
       error: (error) => {
         console.log(error);
+        this.errorMessage = getErrorMessage(error);
       },
     });
   }
@@ -75,6 +90,11 @@ export class Categories implements OnInit {
   }
 
   saveEdit(id: number) {
+    if (this.isSavingCategory || this.isEditingCategoryNameInvalid()) return;
+
+    this.isSavingCategory = true;
+    this.errorMessage = '';
+
     const name = this.editingCategoryName.trim();
 
     if (!name) return;
@@ -83,7 +103,9 @@ export class Categories implements OnInit {
       name,
     };
 
-    this.categoryService.updateCategory(body, id).subscribe({
+    this.categoryService.updateCategory(body, id)
+    .pipe(finalize(() => this.isSavingCategory = false))
+    .subscribe({
       next: () => {
         this.categories.update((categories) =>
           categories.map((category) => (category.id === id ? { ...category, name } : category)),
@@ -92,17 +114,26 @@ export class Categories implements OnInit {
       },
       error: (error) => {
         console.log(error);
+        this.errorMessage = getErrorMessage(error);
       },
     });
   }
 
   deleteCategory(id: number) {
-    this.categoryService.deleteCategory(id).subscribe({
+    if (this.deletingCategoryIds.has(id)) return;
+
+    this.deletingCategoryIds.add(id);
+    this.errorMessage = '';
+
+    this.categoryService.deleteCategory(id)
+    .pipe(finalize(() => this.deletingCategoryIds.delete(id)))
+    .subscribe({
       next: () => {
         this.categories.update((categories) => categories.filter((category) => category.id !== id));
       },
       error: (error) => {
         console.log(error);
+        this.errorMessage = getErrorMessage(error);
       },
     });
   }

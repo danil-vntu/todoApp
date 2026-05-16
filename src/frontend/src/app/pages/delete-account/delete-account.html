@@ -35,9 +35,9 @@
             <button
             class="w-full rounded-xl bg-red-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
             (click)="deleteAccount()"
-            [disabled]="password.length >0 && password.length<8"
+            [disabled]="isFormInvalid() || isSubmitting"
             >
-                Delete your account
+                {{ isSubmitting ? 'Deleting...' : 'Delete your account' }}
             </button>
         </div>
     </div>

@@ -63,16 +63,36 @@
                     type="text"
                     placeholder="{{ name() }}"
                     class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500"
+                    maxlength="100"
                     [(ngModel)]="newName"
                     />
 
                     <button
-                    class="rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 sm:whitespace-nowrap"
+                    class="rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 sm:whitespace-nowrap dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
                     (click)="updateUser()"
+                    [disabled]="isNameInvalid() || isSubmitting"
                     >
-                        Change name
+                        {{ isSubmitting ? 'Saving...' : 'Change name' }}
                     </button>
                 </div>
+
+                @if (newName.length > 0 && newName.trim().length === 0) {
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-400">
+                        Name is required.
+                    </p>
+                }
+
+                @if (newName.length > 100) {
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-400">
+                        Name cannot be longer than 100 characters.
+                    </p>
+                }
+
+                @if (errorMessage()) {
+                    <p class="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
+                        {{ errorMessage() }}
+                    </p>
+                }
             </div>
 
             <div class="mt-4 grid gap-3 sm:grid-cols-2">

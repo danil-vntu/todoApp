@@ -15,6 +15,7 @@
         type="text"
         placeholder="Email..."
         class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500"
+        maxlength="450"
         [(ngModel)]="email"
       />
 
@@ -22,6 +23,7 @@
         type="text"
         placeholder="Name..."
         class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500"
+        maxlength="100"
         [(ngModel)]="name"
       />
 
@@ -48,11 +50,27 @@
         </p>
       }
 
-      @if (!name) {
+      @if (isEmailInvalid()) {
+        <p
+          class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300"
+        >
+          Enter a valid email address.
+        </p>
+      }
+
+      @if (!name.trim()) {
         <p
           class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300"
         >
           Name is required.
+        </p>
+      }
+
+      @if (name.length > 100) {
+        <p
+          class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300"
+        >
+          Name cannot be longer than 100 characters.
         </p>
       }
 
@@ -67,9 +85,9 @@
       <button
         class="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
         (click)="register()"
-        [disabled]="password.length < 8 || !email || !name"
+        [disabled]="isRegisterInvalid() || isSubmitting"
       >
-        Register
+        {{ isSubmitting ? 'Registering...' : 'Register' }}
       </button>
 
       <p class="text-center text-sm text-slate-600 dark:text-slate-400">
