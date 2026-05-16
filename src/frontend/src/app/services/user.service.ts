@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { UserProfile } from '../interfaces/user/user-profile';
-import { UserUpdate } from '../interfaces/user/user-update-request';
+import { UserUpdateRequest } from '../interfaces/user/user-update-request';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -19,7 +19,7 @@ export class UserService {
       `${environment.apiUrl}/user/me`
   )}
   
-  updateUser(body: UserUpdate) {
+  updateUser(body: UserUpdateRequest) {
     return this.http.put<UserProfile>(
       `${environment.apiUrl}/user/me`,
       body

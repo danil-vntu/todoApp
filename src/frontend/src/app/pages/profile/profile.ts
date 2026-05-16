@@ -3,7 +3,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { UserService } from '../../services/user';
+import { UserService } from '../../services/user.service';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { getErrorMessage } from '../../utils/http-error-message';

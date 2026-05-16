@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 
-import { AuthService } from '../../services/auth';
+import { AuthService } from '../../services/auth.service';
 import { getErrorMessage } from '../../utils/http-error-message';
 
 @Component({

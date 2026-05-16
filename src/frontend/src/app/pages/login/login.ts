@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../services/auth';
+import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { getErrorMessage } from '../../utils/http-error-message';

@@ -3,8 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
 
-import { TaskService } from '../../services/task';
-import { CategoryService } from '../../services/category';
+import { TaskService } from '../../services/task.service';
+import { CategoryService } from '../../services/category.service';
 import { CategoryResponse } from '../../interfaces/category/category-response';
 import { TaskResponse } from '../../interfaces/task/task-response';
 import { PagedResult } from '../../interfaces/paging/paged-result';

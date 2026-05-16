@@ -1,3 +1,3 @@
-export interface UserUpdate {
+export interface UserUpdateRequest {
     name: string;
 }

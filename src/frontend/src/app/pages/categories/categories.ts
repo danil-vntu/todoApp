@@ -2,7 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 
-import { CategoryService } from '../../services/category';
+import { CategoryService } from '../../services/category.service';
 
 import { CategoryResponse } from '../../interfaces/category/category-response';
 import { getErrorMessage } from '../../utils/http-error-message';

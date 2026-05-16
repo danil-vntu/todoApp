@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthResponse } from '../interfaces/auth/auth-response';
 import { LoginRequest } from '../interfaces/auth/login-request';
 import { RegisterRequest } from '../interfaces/auth/register-request';
-import { ChangePassword } from '../interfaces/auth/change-password-request';
+import { ChangePasswordRequest } from '../interfaces/auth/change-password-request';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -28,7 +28,7 @@ export class AuthService {
     )
   }
 
-  changePassword(body: ChangePassword) {
+  changePassword(body: ChangePasswordRequest) {
     return this.http.post(
       `${environment.apiUrl}/auth/change-password`,
       body,
