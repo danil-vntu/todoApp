@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "frontend": {
+    "northtodo": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -54,10 +54,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "frontend:build:production"
+              "buildTarget": "northtodo:build:production"
             },
             "development": {
-              "buildTarget": "frontend:build:development"
+              "buildTarget": "northtodo:build:development"
             }
           },
           "defaultConfiguration": "development"

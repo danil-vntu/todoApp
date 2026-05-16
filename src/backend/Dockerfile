@@ -3,8 +3,8 @@ WORKDIR /src
 
 COPY . .
 
-RUN dotnet restore TodoApp.API/TodoApp.API.csproj
-RUN dotnet publish TodoApp.API/TodoApp.API.csproj -c Release -o /app/publish
+RUN dotnet restore NorthTodo.API/NorthTodo.API.csproj
+RUN dotnet publish NorthTodo.API/NorthTodo.API.csproj -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
@@ -15,4 +15,4 @@ ENV ASPNETCORE_URLS=http://+:10000
 
 EXPOSE 10000
 
-ENTRYPOINT ["dotnet", "TodoApp.API.dll"]
+ENTRYPOINT ["dotnet", "NorthTodo.API.dll"]

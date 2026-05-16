@@ -1,4 +1,6 @@
 {
+  "outputDirectory": "dist/northtodo/browser",
+
   "rewrites": [
     {
       "source": "/(.*)",

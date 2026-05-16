@@ -11,7 +11,7 @@ import { ThemeService } from './services/theme.service';
   styleUrl: './app.css',
 })
 export class App {
-  protected readonly title = signal('frontend');
+  protected readonly title = signal('NorthTodo');
 
   constructor(private themeService: ThemeService) {}
 }
