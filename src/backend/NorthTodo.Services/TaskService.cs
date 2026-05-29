@@ -118,6 +118,25 @@ namespace NorthTodo.Services
             return _mapper.Map<TaskResponseDto>(task);
         }
 
+        public async Task<TaskResponseDto> ToggleTaskCompletionAsync
+            (TaskCompletionRequestDto taskCompletionDto, int taskId, int userId)
+        {
+            var currentTask = await _context.TaskItems.FirstOrDefaultAsync(t => t.Id == taskId);
+
+            if (currentTask == null)
+                throw new KeyNotFoundException("Task is not found");
+
+            if (currentTask.UserId != userId)
+                throw new UnauthorizedAccessException("You do not have access to this task");
+
+            currentTask.IsCompleted = taskCompletionDto.IsCompleted;
+
+            var task = _mapper.Map(taskCompletionDto, currentTask);
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<TaskResponseDto>(task);
+        }
+
         public async Task<bool> DeleteTaskAsync(int taskId, int userId)
         {
             var task = await _context.TaskItems.FindAsync(taskId);

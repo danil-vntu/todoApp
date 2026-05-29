@@ -54,6 +54,15 @@ namespace NorthTodo.API.Controllers
             return Ok(task);
         }
 
+        [HttpPatch("{id}/status")]
+        public async Task<IActionResult> UpdateTaskStatus
+            (int id, [FromBody] TaskCompletionRequestDto statusDto)
+        {
+            var userId = User.GetUserId();
+            var task = await _taskService.ToggleTaskCompletionAsync(statusDto, id, userId);
+            return Ok(task);
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTask(int id)
         {

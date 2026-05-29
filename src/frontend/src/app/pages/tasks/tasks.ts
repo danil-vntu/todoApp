@@ -285,14 +285,10 @@ export class Tasks implements OnInit {
     this.errorMessage = '';
 
     const body = {
-      title: task.title,
-      description: task.description,
       isCompleted: !task.isCompleted,
-      dueDate: task.dueDate,
-      categoryId: task.categoryId,
     };
 
-    this.taskService.updateTask(body, task.id)
+    this.taskService.toggleCompleted(body, task.id)
     .pipe(finalize(() => this.togglingTaskIds.delete(task.id)))
     .subscribe({
       next: () => {

@@ -44,6 +44,14 @@ namespace NorthTodo.Interfaces.Mapping
                 .ForMember(m => m.Category, opt => opt.Ignore())
                 .ForMember(m => m.CategoryId, opt => opt.AllowNull());
 
+            CreateMap<TaskCompletionRequestDto, TaskItem>()
+                .ForMember(m => m.Id, opt => opt.Ignore())
+                .ForMember(m => m.CreatedAt, opt => opt.Ignore())
+                .ForMember(m => m.UserId, opt => opt.Ignore())
+                .ForMember(m => m.User, opt => opt.Ignore())
+                .ForMember(m => m.Category, opt => opt.Ignore())
+                .ForMember(m => m.CategoryId, opt => opt.AllowNull());
+
             CreateMap<TaskItem, TaskResponseDto>();
 
             CreateMap<Category, CategoryResponseDto>();

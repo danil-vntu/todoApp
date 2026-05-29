@@ -6,6 +6,7 @@ import { PagedResult } from '../interfaces/paging/paged-result';
 import { environment } from '../environments/environment';
 import { TaskCreateUpdate } from '../interfaces/task/task-create-update';
 import { TaskResponse } from '../interfaces/task/task-response';
+import { TaskCompletionRequest } from '../interfaces/task/task-completion-request';
 
 @Injectable({
   providedIn: 'root',
@@ -40,6 +41,14 @@ export class TaskService {
     return this.http.put
     <TaskResponse>(
       `${environment.apiUrl}/Task/${id}`,
+      body
+    )
+  }
+
+    toggleCompleted(body: TaskCompletionRequest, id: number | null) {
+    return this.http.patch
+    <TaskResponse>(
+      `${environment.apiUrl}/Task/${id}/status`,
       body
     )
   }
