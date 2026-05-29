@@ -22,6 +22,7 @@ export class Tasks implements OnInit {
   categories = signal<CategoryResponse[]>([]);
 
   tasks = signal<PagedResult<TaskResponse> | null>(null);
+  tasksCount = 0;
 
   page = 1;
   pageSize = 10;
@@ -108,6 +109,14 @@ export class Tasks implements OnInit {
   ngOnInit() {
     this.loadCategories();
     this.loadTasks();
+  }
+
+  allowNextPage() : boolean {
+      if(this.page * this.pageSize < this.tasksCount) {
+        return true;
+      }
+
+    return false;
   }
 
   nextPage() {
@@ -208,6 +217,7 @@ export class Tasks implements OnInit {
     this.taskService.getTasks(query).subscribe({
       next: (response) => {
         this.tasks.set(response);
+        this.tasksCount = response.totalCount;
       },
       error: (error) => {
         this.showError(error);
