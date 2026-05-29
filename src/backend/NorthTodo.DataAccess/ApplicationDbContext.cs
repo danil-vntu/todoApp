@@ -26,6 +26,7 @@ namespace NorthTodo.DataAccess
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
+                .HasFilter("[IsDeleted] = 0")
                 .IsUnique();
 
             base.OnModelCreating(modelBuilder);

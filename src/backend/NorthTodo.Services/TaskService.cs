@@ -1,4 +1,5 @@
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using NorthTodo.Interfaces.DTOs.Paging;
 using NorthTodo.Interfaces.DTOs.Tasks;
@@ -18,12 +19,10 @@ namespace NorthTodo.Services
             _mapper = mapper;
         }
 
-        public async Task<PagedResultDto<TaskResponseDto>> GetUsersTasksAsync(TaskListQueryDto queryDto, int userId)
+        public async Task<PagedResultDto<TaskResponseDto>> GetUsersTasksAsync(
+            TaskListQueryDto queryDto, int userId)
         {
             IQueryable<TaskItem> query = _context.TaskItems.Where(t => t.UserId == userId);
-
-            if (query == null) 
-                throw new KeyNotFoundException("Tasks are not found");
 
             if (queryDto.CategoryId.HasValue)
                 query = query.Where(t => t.CategoryId == queryDto.CategoryId.Value);
@@ -31,22 +30,22 @@ namespace NorthTodo.Services
             if (!string.IsNullOrWhiteSpace(queryDto.Search))
             {
                 var searchTerm = queryDto.Search.Trim().ToLower();
-                query = query.Where(t => t.Title.Contains(searchTerm) || t.Description != null && t.Description.Contains(searchTerm));
+                query = query.Where(t => t.Title.Contains(searchTerm) 
+                || t.Description != null && t.Description.Contains(searchTerm));
             }
 
             var itemsCount = await query.CountAsync();
 
-            var pagedTasks = await query
+            var pagedDtoTasks = await query
                 .OrderByDescending(t => t.CreatedAt)
                 .Skip((queryDto.Page - 1) * queryDto.PageSize)
                 .Take(queryDto.PageSize)
+                .ProjectTo<TaskResponseDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
-
-            var taskDtos = _mapper.Map<List<TaskResponseDto>>(pagedTasks);
 
             return new PagedResultDto<TaskResponseDto>
             {
-                Items = taskDtos,
+                Items = pagedDtoTasks,
                 TotalCount = itemsCount,
                 Page = queryDto.Page,
                 PageSize = queryDto.PageSize

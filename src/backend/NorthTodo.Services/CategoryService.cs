@@ -3,6 +3,7 @@ using AutoMapper;
 using NorthTodo.Interfaces.DTOs.Categories;
 using NorthTodo.Interfaces.Entities;
 using NorthTodo.Interfaces.Interfaces;
+using AutoMapper.QueryableExtensions;
 
 namespace NorthTodo.Services
 {
@@ -31,8 +32,8 @@ namespace NorthTodo.Services
         {
             var categories = await _context.Categories
                 .Where(c => c.UserId == userId)
+                .ProjectTo<CategoryResponseDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
-            if (categories == null) return Enumerable.Empty<CategoryResponseDto>();
 
             return _mapper.Map<List<CategoryResponseDto>>(categories);
         }
@@ -52,10 +53,13 @@ namespace NorthTodo.Services
         {
             var currentCategory = await _context.Categories
                 .FirstOrDefaultAsync(c => c.Id == categoryId);
+
             if (currentCategory == null) 
                 throw new KeyNotFoundException("Category is not found");
+
             if (currentCategory.UserId != userId)
                 throw new UnauthorizedAccessException("You do not have access to this category");
+
             var category = _mapper.Map(categoryDto, currentCategory);
             await _context.SaveChangesAsync();
             return _mapper.Map<CategoryResponseDto>(category);
@@ -64,8 +68,10 @@ namespace NorthTodo.Services
         public async Task<bool> DeleteCategoryAsync(int categoryId, int userId)
         {
             var category = await _context.Categories.FindAsync(categoryId);
-            if (category == null) 
+
+            if (category == null)
                 throw new KeyNotFoundException("Category is not found");
+
             if (category.UserId != userId)
                 throw new UnauthorizedAccessException("You do not have access to this category");
 
@@ -73,6 +79,7 @@ namespace NorthTodo.Services
             {
                 task.CategoryId = null;
             }
+
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
             return true;
