@@ -355,7 +355,6 @@ Example:
 
 - The backend uses Render free tier hosting, so cold starts may occur after inactivity.
 - JWT authentication currently does not use refresh tokens.
-- Multi-category filtering is partially handled on the frontend and is not fully server-side.
 - Frontend automated tests are not fully configured yet.
 - The frontend currently requires manual API URL configuration for local development.
 

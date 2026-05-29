@@ -5,6 +5,7 @@ using NorthTodo.Interfaces.DTOs.Paging;
 using NorthTodo.Interfaces.DTOs.Tasks;
 using NorthTodo.Interfaces.Entities;
 using NorthTodo.Interfaces.Interfaces;
+using System.Linq;
 
 namespace NorthTodo.Services
 {
@@ -24,8 +25,12 @@ namespace NorthTodo.Services
         {
             IQueryable<TaskItem> query = _context.TaskItems.Where(t => t.UserId == userId);
 
-            if (queryDto.CategoryId.HasValue)
-                query = query.Where(t => t.CategoryId == queryDto.CategoryId.Value);
+            if (queryDto.SearchCategoryIds?.Any() == true)
+            {
+                query = query.Where(t =>
+                    t.CategoryId.HasValue &&
+                    queryDto.SearchCategoryIds.Contains(t.CategoryId.Value));
+            }
 
             if (!string.IsNullOrWhiteSpace(queryDto.Search))
             {

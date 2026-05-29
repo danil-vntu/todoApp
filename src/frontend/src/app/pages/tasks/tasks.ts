@@ -27,8 +27,9 @@ export class Tasks implements OnInit {
   page = 1;
   pageSize = 10;
   search = '';
-  searchCategoryId: number | undefined = undefined;
-  selectedCategoryIds: number[] = [];
+  searchCategoryIds: number[] = [];
+  // searchCategoryId: number | undefined = undefined;
+  // selectedCategoryIds: number[] = [];
   isCategoryFilterOpen = false;
 
   id = signal<number | null>(null);
@@ -149,36 +150,24 @@ export class Tasks implements OnInit {
     return category?.name || 'Unknown category';
   }
 
-  filteredTasks() {
-    const items = this.tasks()?.items ?? [];
-
-    if (this.selectedCategoryIds.length === 0) {
-      return items;
-    }
-
-    return items.filter(
-      (task) => task.categoryId !== null && this.selectedCategoryIds.includes(task.categoryId),
-    );
-  }
+  listTasks() { return this.tasks()?.items ?? []; }
 
   selectedCategoryLabel() {
-    if (this.selectedCategoryIds.length === 0) return 'All categories';
+    if (this.searchCategoryIds.length === 0) return 'All categories';
 
-    if (this.selectedCategoryIds.length === this.categories().length) {
+    if (this.searchCategoryIds.length === this.categories().length) {
       return 'All categories selected';
     }
 
-    if (this.selectedCategoryIds.length === 1) {
-      return this.getCategoryName(this.selectedCategoryIds[0]);
+    if (this.searchCategoryIds.length === 1) {
+      return this.getCategoryName(this.searchCategoryIds[0]);
     }
 
-    return `${this.selectedCategoryIds.length} categories`;
+    return `${this.searchCategoryIds.length} categories`;
   }
 
   applyFilters() {
     this.page = 1;
-    this.searchCategoryId =
-      this.selectedCategoryIds.length === 1 ? this.selectedCategoryIds[0] : undefined;
     this.loadTasks();
   }
 
@@ -187,22 +176,22 @@ export class Tasks implements OnInit {
   }
 
   toggleSearchCategory(categoryId: number) {
-    if (this.selectedCategoryIds.includes(categoryId)) {
-      this.selectedCategoryIds = this.selectedCategoryIds.filter((id) => id !== categoryId);
+    if (this.searchCategoryIds.includes(categoryId)) {
+      this.searchCategoryIds = this.searchCategoryIds.filter((id) => id !== categoryId);
     } else {
-      this.selectedCategoryIds = [...this.selectedCategoryIds, categoryId];
+      this.searchCategoryIds = [...this.searchCategoryIds, categoryId];
     }
 
     this.applyFilters();
   }
 
   selectAllCategories() {
-    this.selectedCategoryIds = this.categories().map((category) => category.id);
+    this.searchCategoryIds = this.categories().map((category) => category.id);
     this.applyFilters();
   }
 
   clearAllCategories() {
-    this.selectedCategoryIds = [];
+    this.searchCategoryIds = [];
     this.applyFilters();
   }
 
@@ -211,7 +200,7 @@ export class Tasks implements OnInit {
       page: this.page,
       pageSize: this.pageSize,
       search: this.search,
-      searchCategoryId: this.searchCategoryId,
+      searchCategoryIds: this.searchCategoryIds,
     };
 
     this.taskService.getTasks(query).subscribe({

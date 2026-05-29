@@ -22,7 +22,7 @@ export class TaskService {
           page: query.page,
           pageSize: query.pageSize,
           search: query.search ?? "",
-          categoryId: query.searchCategoryId ?? ""
+          searchCategoryIds: query.searchCategoryIds ?? ""
         }
       }
     )
